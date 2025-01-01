@@ -1,3 +1,4 @@
+![](./public/logo.jpg)
 # CodeCandy 🍬
 
 &#x20;  &#x20;
