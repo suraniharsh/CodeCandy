@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, useScroll, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { FiGithub, FiCoffee, FiCode, FiShare2, FiStar } from 'react-icons/fi';
 
 interface Contributor {
