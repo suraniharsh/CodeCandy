@@ -10,7 +10,7 @@ interface SitemapUrl {
   lastmod?: string;
 }
 
-export async function generateSitemap() {
+export async function generateSitemap(): Promise<string> {
   try {
     const baseUrl = 'https://codecandy.suraniharsh.codes';
     const urls: SitemapUrl[] = [];
@@ -22,8 +22,6 @@ export async function generateSitemap() {
       { url: '/collections', priority: 0.9, changefreq: 'daily' },
       { url: '/search', priority: 0.7, changefreq: 'daily' },
       { url: '/favorites', priority: 0.7, changefreq: 'daily' },
-      { url: '/login', priority: 0.6, changefreq: 'monthly' },
-      { url: '/settings', priority: 0.5, changefreq: 'monthly' },
     ] as const;
 
     urls.push(...staticPages.map(page => ({
@@ -64,9 +62,21 @@ export async function generateSitemap() {
     });
 
     // Create sitemap
-    const stream = new SitemapStream({ hostname: baseUrl });
-    const data = await streamToPromise(Readable.from(urls).pipe(stream));
-    return data.toString();
+    const stream = new SitemapStream({
+      hostname: baseUrl,
+      xmlns: {
+        news: false,
+        xhtml: false,
+        image: false,
+        video: false
+      }
+    });
+
+    const xmlString = await streamToPromise(
+      Readable.from(urls).pipe(stream)
+    ).then(data => data.toString());
+
+    return '<?xml version="1.0" encoding="UTF-8"?>' + xmlString;
 
   } catch (error) {
     console.error('Error generating sitemap:', error);

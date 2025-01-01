@@ -27,6 +27,7 @@ export function SEO({
 }: SEOProps) {
   const siteTitle = title.includes('CodeCandy') ? title : `${title} | CodeCandy`;
   const defaultTags = [
+    'CodeCandy', 'Code', 'candy', 'code snippets', 'code management', 'developer tools','Harsh Surani', 'Surani Harsh', 'surani', 'harsh',
     'code snippets', 'code management', 'developer tools','Harsh Surani', 'Surani Harsh', 'surani', 'harsh',
      'programming', 'code editor', 'syntax highlighting', 'code organization', 'snippet manager', 
     'syntax highlighting', 'code organization', 'snippet manager',  
