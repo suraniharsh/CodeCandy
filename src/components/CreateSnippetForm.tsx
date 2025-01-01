@@ -43,7 +43,8 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
         code,
         language,
         tags,
-        collectionId: selectedCollectionId || undefined
+        collectionId: selectedCollectionId || undefined,
+        isFavorite: false
       };
 
       await snippetService.createSnippet(snippetData);
