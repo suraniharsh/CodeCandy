@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HelmetProvider } from 'react-helmet-async';
 import { Navbar, Sidebar } from './components';
 import { Home, Collections, Favorites, Search, SnippetView, Login, Profile, CreateSnippet, Settings, About } from './pages';
 import { AuthProvider } from './contexts/AuthContext';
@@ -139,11 +140,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 

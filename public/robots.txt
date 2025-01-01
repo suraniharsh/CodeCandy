@@ -1,0 +1,14 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow private routes
+Disallow: /login
+Disallow: /settings
+Disallow: /profile
+
+# Sitemap location
+Sitemap: https://codecandy.suraniharsh.codes/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10 
