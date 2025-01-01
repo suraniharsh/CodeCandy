@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar, Sidebar } from './components';
-import { Home, Collections, Favorites, Search, SnippetView, Login, Profile, CreateSnippet, Settings } from './pages';
+import { Home, Collections, Favorites, Search, SnippetView, Login, Profile, CreateSnippet, Settings, About } from './pages';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
@@ -102,6 +102,7 @@ function AppContent() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/about" element={<About />} />
               </Routes>
             </motion.div>
           </AnimatePresence>

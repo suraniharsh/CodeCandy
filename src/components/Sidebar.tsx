@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiHome, FiFolder, FiSearch, FiHeart, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiFolder, FiSearch, FiHeart, FiLogOut, FiInfo } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
 interface SidebarProps {
@@ -72,6 +72,33 @@ export function Sidebar({ isOpen }: SidebarProps) {
               </Link>
             </li>
           ))}
+          
+          <li>
+            <Link
+              to="/about"
+              className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+                location.pathname === '/about'
+                  ? 'bg-primary-900/20 text-primary-400'
+                  : 'text-dark-300 hover:bg-dark-700/50 hover:text-dark-100'
+              }`}
+            >
+              <FiInfo className="w-5 h-5 flex-shrink-0" />
+              <motion.div
+                initial={false}
+                animate={{
+                  width: isOpen ? "auto" : 0,
+                  opacity: isOpen ? 1 : 0,
+                  x: isOpen ? 0 : -10,
+                }}
+                transition={textSpringTransition}
+                className="overflow-hidden ml-3"
+              >
+                <span className="text-sm whitespace-nowrap">
+                  About
+                </span>
+              </motion.div>
+            </Link>
+          </li>
         </ul>
       </nav>
       

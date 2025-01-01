@@ -6,4 +6,5 @@ export { default as SnippetView } from './SnippetView';
 export { default as Login } from './Login';
 export { default as Profile } from './Profile';
 export { default as CreateSnippet } from './CreateSnippet';
-export { default as Settings } from './Settings'; 
+export { default as Settings } from './Settings';
+export { About } from './About'; 
