@@ -11,6 +11,7 @@ export interface Snippet {
   createdAt: number;
   collectionId?: string;
   userId?: string;
+  isFavorite: boolean;
 }
 
 export interface Collection {

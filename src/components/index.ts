@@ -7,3 +7,4 @@ export { CreateSnippetForm } from './CreateSnippetForm';
 export { CodeBlock } from './CodeBlock';
 export { SnippetCard } from './SnippetCard';
 export { ErrorFallback } from './ErrorFallback';
+export { AnimatedPage } from './AnimatedPage';
