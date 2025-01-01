@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { FiFolder, FiCode, FiChevronRight, FiLoader, FiShare2, FiTrash2 } from 'react-icons/fi';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { snippetService, type Collection, type Snippet } from '../services/snippetService';

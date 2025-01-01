@@ -10,7 +10,6 @@ function Search() {
   const [query, setQuery] = useState('');
   const [allSnippets, setAllSnippets] = useState<Snippet[]>([]);
   const [displayedSnippets, setDisplayedSnippets] = useState<Snippet[]>([]);
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, _setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -39,11 +38,11 @@ function Search() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query);
-      setPage(1); // Reset page when query changes
+      updateDisplayedSnippets(allSnippets, 1); // Reset to first page when query changes
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, allSnippets]);
 
   // Filter snippets based on search query
   useEffect(() => {
@@ -59,10 +58,11 @@ function Search() {
 
   // Update displayed snippets based on current page
   const updateDisplayedSnippets = (snippets: Snippet[], currentPage: number) => {
+    const startIndex = 0;
     const endIndex = currentPage * SNIPPETS_PER_PAGE;
     const hasMoreSnippets = endIndex < snippets.length;
     setHasMore(hasMoreSnippets);
-    setDisplayedSnippets(snippets.slice(0, endIndex));
+    setDisplayedSnippets(snippets.slice(startIndex, endIndex));
   };
 
   // Infinite scroll setup
@@ -72,16 +72,13 @@ function Search() {
 
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
-        setPage(prevPage => {
-          const nextPage = prevPage + 1;
-          updateDisplayedSnippets(allSnippets, nextPage);
-          return nextPage;
-        });
+        const nextPage = Math.floor(displayedSnippets.length / SNIPPETS_PER_PAGE) + 1;
+        updateDisplayedSnippets(allSnippets, nextPage);
       }
     });
 
     if (node) observer.current.observe(node);
-  }, [loading, hasMore, allSnippets]);
+  }, [loading, hasMore, allSnippets, displayedSnippets.length]);
 
   return (
     <div className="max-w-4xl mx-auto">
