@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { FiKey, FiRefreshCw } from 'react-icons/fi';
 import { ShortcutConfig, DEFAULT_SHORTCUTS } from '../types/shortcuts';
 import toast from 'react-hot-toast';

@@ -12,7 +12,7 @@ function Search() {
   const [displayedSnippets, setDisplayedSnippets] = useState<Snippet[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading, _setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const observer = useRef<IntersectionObserver>();

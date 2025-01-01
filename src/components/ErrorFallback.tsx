@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { FiWifi, FiRefreshCw } from 'react-icons/fi';
 
 interface ErrorFallbackProps {

@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiClock, FiTag } from 'react-icons/fi';
 import type { Snippet } from '../services/snippetService';

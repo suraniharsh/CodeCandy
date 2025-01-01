@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMenu, FiX, FiSearch, FiPlus, FiCommand } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
-import { motion } from 'framer-motion';
 
 interface NavbarProps {
   onSidebarToggle: (isOpen: boolean) => void;
