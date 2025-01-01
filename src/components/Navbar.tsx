@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiMenu, FiX, FiSearch, FiPlus, FiCommand } from 'react-icons/fi';
+import { FiMenu, FiX, FiSearch, FiPlus} from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
@@ -11,7 +11,7 @@ interface NavbarProps {
 export function Navbar({ onSidebarToggle }: NavbarProps) {
   const { user, signOut } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { isModalVisible: isShortcutsOpen, setIsModalVisible: setIsShortcutsOpen } = useKeyboardShortcuts();
+  const { setIsModalVisible: setIsShortcutsOpen } = useKeyboardShortcuts();
 
   const handleSidebarToggle = () => {
     const newState = !isSidebarOpen;
