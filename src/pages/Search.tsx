@@ -24,7 +24,7 @@ function Search() {
         setInitialLoading(true);
         const snippets = await snippetService.getAllSnippets();
         setAllSnippets(snippets);
-        updateDisplayedSnippets(snippets, '', 1);
+        updateDisplayedSnippets(snippets, 1);
       } catch (error) {
         console.error('Error loading snippets:', error);
       } finally {
@@ -54,11 +54,11 @@ function Search() {
       snippet.code.toLowerCase().includes(searchTerm) ||
       snippet.tags.some(tag => tag.toLowerCase().includes(searchTerm))
     );
-    updateDisplayedSnippets(filteredSnippets, debouncedQuery, 1);
+    updateDisplayedSnippets(filteredSnippets, 1);
   }, [debouncedQuery, allSnippets]);
 
   // Update displayed snippets based on current page
-  const updateDisplayedSnippets = (snippets: Snippet[], searchQuery: string, currentPage: number) => {
+  const updateDisplayedSnippets = (snippets: Snippet[], currentPage: number) => {
     const endIndex = currentPage * SNIPPETS_PER_PAGE;
     const hasMoreSnippets = endIndex < snippets.length;
     setHasMore(hasMoreSnippets);
@@ -74,14 +74,14 @@ function Search() {
       if (entries[0].isIntersecting && hasMore) {
         setPage(prevPage => {
           const nextPage = prevPage + 1;
-          updateDisplayedSnippets(allSnippets, debouncedQuery, nextPage);
+          updateDisplayedSnippets(allSnippets, nextPage);
           return nextPage;
         });
       }
     });
 
     if (node) observer.current.observe(node);
-  }, [loading, hasMore, allSnippets, debouncedQuery]);
+  }, [loading, hasMore, allSnippets]);
 
   return (
     <div className="max-w-4xl mx-auto">
