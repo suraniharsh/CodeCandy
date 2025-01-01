@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMenu, FiX, FiSearch, FiPlus, FiCommand } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 interface NavbarProps {
   onSidebarToggle: (isOpen: boolean) => void;
@@ -10,6 +11,7 @@ interface NavbarProps {
 export function Navbar({ onSidebarToggle }: NavbarProps) {
   const { user, signOut } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { isModalVisible: isShortcutsOpen, setIsModalVisible: setIsShortcutsOpen } = useKeyboardShortcuts();
 
   const handleSidebarToggle = () => {
     const newState = !isSidebarOpen;
@@ -64,9 +66,11 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
           </Link>
 
           <button
-            className="p-2 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
+            onClick={() => setIsShortcutsOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
           >
-            <FiCommand className="w-5 h-5" />
+            <span className="text-sm">Shortcuts</span>
+            <span className="text-xs text-dark-400">(Ctrl + /)</span>
           </button>
 
           <Link
