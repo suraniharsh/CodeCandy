@@ -19,9 +19,25 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
     onSidebarToggle(newState);
   };
 
+  const renderShortcuts = () => {
+    return (
+      <button
+        onClick={() => setIsShortcutsOpen(true)}
+        type="button"
+        className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors w-max"
+      >
+        <span className="text-sm">Shortcuts</span>
+        <span className="text-xs text-dark-400">(Ctrl + /)</span>
+      </button>
+    );
+  };
+
   const rightSection = () => {
     return (
       <div className="flex flex-col items-center gap-2 p-2 ml-auto md:flex-row sm:gap-3">
+        <div className="hidden md:block">
+          {renderShortcuts()}
+        </div>
         <Link
           to="/create"
           className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex-shrink-0 w-full md:w-max text-center"
@@ -120,11 +136,11 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
           </div>
 
           {/* Center section */}
-          <div className="flex-1 hidden max-w-2xl mx-4 sm:block">
+          <div className="flex-1 hidden max-w-2xl mx-4 md:block">
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search snippets..."
+                placeholder="Search snippets!!..."
                 className="w-full px-4 py-1.5 bg-dark-700 border border-dark-600 rounded-lg text-dark-100 text-sm placeholder-dark-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
               />
               <FiSearch className="absolute -translate-y-1/2 right-3 top-1/2 text-dark-400" />
@@ -134,21 +150,16 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
           {/* Right section */}
           <div className="hidden md:block">{rightSection()}</div>
           <div className="absolute right-0 flex items-center justify-end w-full ml-auto md:hidden">
-            <Link
-              to="/search"
-              className="p-2 transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 sm:hidden"
-              rel="noopener noreferrer"
-            >
-              <FiSearch className="w-5 h-5" />
-            </Link>
-            <button
-              onClick={() => setIsShortcutsOpen(true)}
-              type="button"
-              className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors w-max"
-            >
-              <span className="text-sm">Shortcuts</span>
-              <span className="text-xs text-dark-400">(Ctrl + /)</span>
-            </button>
+            <div className="flex items-center justify-end w-full ml-auto md:hidden">
+              <Link
+                to="/search"
+                className="p-2 transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50"
+                rel="noopener noreferrer"
+              >
+                <FiSearch className="w-5 h-5" />
+              </Link>
+              {renderShortcuts()}
+            </div>
 
             <div className="relative group">
               <div
