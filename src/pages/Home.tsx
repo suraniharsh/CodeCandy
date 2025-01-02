@@ -44,25 +44,28 @@ export function Home() {
         title="CodeCandy - Your Personal Code Snippet Manager"
         description="Save, organize, and share your code snippets with syntax highlighting, collections, and instant search. The modern way to manage your code snippets."
       />
-      <AnimatedPage className="p-4 sm:p-6">
+      <AnimatedPage className="p-4 md:p-6">
         <motion.div variants={itemVariants} className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
+          <div className="flex flex-col items-start justify-between gap-4 mb-4 md:flex-row md:items-center md:gap-0">
+            <div className="w-full max-w-prose ">
               <motion.h1
                 variants={itemVariants}
-                className="mb-2 text-3xl font-bold text-dark-100"
+                className="mb-2 text-2xl font-bold sm:text-3xl text-dark-100"
               >
                 Welcome to CodeCandy
               </motion.h1>
-              <motion.p variants={itemVariants} className="text-dark-300">
+
+              <motion.p variants={itemVariants} className="text-sm text-dark-300 sm:text-base">
                 Your personal code snippet manager. Save, organize, and share
                 your code snippets.
               </motion.p>
             </div>
-            <motion.div variants={itemVariants}>
+
+            <motion.div variants={itemVariants} className="w-full sm:w-auto">
               <Link
                 to="/create"
-                className="flex items-center px-4 py-2 text-white rounded-md shadow-lg bg-primary-500 hover:bg-primary-600 transition-smooth hover:shadow-xl"
+                className="flex items-center justify-center w-full px-4 py-2 text-white truncate rounded-md shadow-lg sm:w-auto bg-primary-500 hover:bg-primary-600 transition-smooth hover:shadow-xl"
+                rel="noopener noreferrer"
               >
                 <FiPlus className="mr-2" />
                 New Snippet
@@ -79,11 +82,13 @@ export function Home() {
             >
               Recent Snippets
             </motion.h2>
+
             {recentSnippets.length > 0 && (
               <motion.div variants={itemVariants}>
                 <Link
                   to="/search"
                   className="text-primary-400 hover:text-primary-300 transition-smooth"
+                  rel="noopener noreferrer"
                 >
                   View all snippets
                 </Link>
@@ -99,9 +104,11 @@ export function Home() {
               <p className="mb-4 text-dark-400">
                 No snippets yet. Create your first snippet to get started!
               </p>
+
               <Link
                 to="/create"
                 className="inline-flex items-center px-4 py-2 text-white rounded-md bg-primary-500 hover:bg-primary-600 transition-smooth"
+                rel="noopener noreferrer"
               >
                 <FiPlus className="mr-2" />
                 Create Snippet
@@ -110,7 +117,7 @@ export function Home() {
           ) : (
             <motion.div
               variants={containerVariants}
-              className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+              className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
             >
               {recentSnippets.map((snippet) => (
                 <SnippetCard key={snippet.id} snippet={snippet} />
