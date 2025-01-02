@@ -44,10 +44,11 @@ export function Home() {
         title="CodeCandy - Your Personal Code Snippet Manager"
         description="Save, organize, and share your code snippets with syntax highlighting, collections, and instant search. The modern way to manage your code snippets."
       />
-      <AnimatedPage className="p-4 md:p-6">
+
+      <AnimatedPage className="flex flex-col w-full p-4 md:p-6">
         <motion.div variants={itemVariants} className="mb-8">
-          <div className="flex flex-col items-start justify-between gap-4 mb-4 md:flex-row md:items-center md:gap-0">
-            <div className="w-full max-w-prose ">
+          <div className="flex flex-col items-start justify-between gap-4 mb-4 md:gap-8 md:flex-row md:items-center">
+            <div className="w-full max-w-prose">
               <motion.h1
                 variants={itemVariants}
                 className="mb-2 text-2xl font-bold sm:text-3xl text-dark-100"
@@ -99,7 +100,7 @@ export function Home() {
           {recentSnippets.length === 0 ? (
             <motion.div
               variants={itemVariants}
-              className="p-8 text-center border rounded-lg bg-dark-800 border-dark-700"
+              className="flex flex-col items-center justify-center w-full p-8 text-center border rounded-lg bg-dark-800 border-dark-700"
             >
               <p className="mb-4 text-dark-400">
                 No snippets yet. Create your first snippet to get started!
