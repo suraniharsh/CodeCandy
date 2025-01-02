@@ -228,7 +228,7 @@ function Collections() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center md:justify-start w-full  min-w-[18rem] mr-auto">
+    <div className="flex flex-col items-center justify-center md:justify-start w-full min-w-[18rem]">
       <div className="flex justify-between mb-6 mr-auto items-left">
         <h1 className="mr-auto text-3xl font-bold text-dark-100">Collections</h1>
 
