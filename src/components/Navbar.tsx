@@ -21,7 +21,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
 
   const rightSection = () => {
     return (
-      <div className="flex flex-col items-center gap-2 ml-auto md:flex-row sm:gap-3">
+      <div className="flex flex-col items-center gap-2 p-2 ml-auto md:flex-row sm:gap-3">
         <Link
           to="/search"
           className="p-2 transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 sm:hidden"
@@ -33,7 +33,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
         <button
           onClick={() => setIsShortcutsOpen(true)}
           type="button"
-          className=":flex items-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
+          className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors w-full md:w-max"
         >
           <span className="text-sm">Shortcuts</span>
           <span className="text-xs text-dark-400">(Ctrl + /)</span>
