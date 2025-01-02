@@ -254,8 +254,8 @@ function Collections() {
                 <div
                   key={collection.id}
                   className={`w-full text-left p-4 transition-smooth group relative hover:translate-x-1 cursor-pointer ${selectedCollection?.id === collection.id
-                      ? 'bg-primary-900/20 text-primary-400 hover:bg-primary-900/30'
-                      : 'text-dark-300 hover:bg-dark-700/50'
+                    ? 'bg-primary-900/20 text-primary-400 hover:bg-primary-900/30'
+                    : 'text-dark-300 hover:bg-dark-700/50'
                     }`}
                   onClick={() => setSelectedCollection(collection)}
                 >
