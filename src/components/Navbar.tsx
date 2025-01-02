@@ -33,7 +33,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
         <button
           onClick={() => setIsShortcutsOpen(true)}
           type="button"
-          className="hidden  md:flex items-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
+          className=":flex items-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
         >
           <span className="text-sm">Shortcuts</span>
           <span className="text-xs text-dark-400">(Ctrl + /)</span>
@@ -41,7 +41,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
 
         <Link
           to="/create"
-          className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex-shrink-0 w-full text-center"
+          className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex-shrink-0 w-full md:w-max text-center"
           rel="noopener noreferrer"
         >
           <FiPlus className="w-4 h-4" />
