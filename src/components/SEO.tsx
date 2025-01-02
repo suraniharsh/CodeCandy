@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { siteConfig } from '../config/meta';
 
 interface SEOProps {
   title?: string;
@@ -14,10 +15,10 @@ interface SEOProps {
 }
 
 export function SEO({ 
-  title = 'CodeCandy - Your Personal Code Snippet Manager',
-  description = 'Save, organize, and share your code snippets with syntax highlighting, collections, and instant search. The modern way to manage your code snippets.',
+  title = siteConfig.title,
+  description = siteConfig.description,
   image = '/og-image.png',
-  url = 'https://codecandy.suraniharsh.codes',
+  url = '/',
   type = 'website',
   publishedAt,
   modifiedAt,
@@ -26,19 +27,10 @@ export function SEO({
   noindex = false
 }: SEOProps) {
   const siteTitle = title.includes('CodeCandy') ? title : `${title} | CodeCandy`;
-  const defaultTags = [
-    'CodeCandy', 'Code', 'candy', 'code snippets', 'code management', 'developer tools','Harsh Surani', 'Surani Harsh', 'surani', 'harsh',
-    'code snippets', 'code management', 'developer tools','Harsh Surani', 'Surani Harsh', 'surani', 'harsh',
-     'programming', 'code editor', 'syntax highlighting', 'code organization', 'snippet manager', 
-    'syntax highlighting', 'code organization', 'snippet manager',  
-    'code sharing', 'development', 'software engineering', 'web development',
-    'productivity tools', 'coding', 'developer workflow', 'code library'
-  ];
-  const allTags = [...new Set([...defaultTags, ...tags])];
+  const allTags = [...new Set([...siteConfig.defaultTags, ...tags])];
   
-  const baseUrl = 'https://codecandy.suraniharsh.codes';
-  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-  const fullImage = image.startsWith('http') ? image : `${baseUrl}${image}`;
+  const fullUrl = url.startsWith('http') ? url : `${siteConfig.baseUrl}${url}`;
+  const fullImage = image.startsWith('http') ? image : `${siteConfig.baseUrl}${image}`;
 
   return (
     <Helmet>
@@ -58,15 +50,15 @@ export function SEO({
       <meta property="og:image" content={fullImage} />
       <meta property="og:image:alt" content={`${title} preview`} />
       <meta property="og:url" content={fullUrl} />
-      <meta property="og:site_name" content="CodeCandy" />
-      <meta property="og:locale" content="en_US" />
+      <meta property="og:site_name" content={siteConfig.openGraph.siteName} />
+      <meta property="og:locale" content={siteConfig.openGraph.locale} />
       {publishedAt && <meta property="article:published_time" content={publishedAt} />}
       {modifiedAt && <meta property="article:modified_time" content={modifiedAt} />}
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@suraniharsh" />
-      <meta name="twitter:creator" content="@suraniharsh" />
+      <meta name="twitter:site" content={siteConfig.social.twitter} />
+      <meta name="twitter:creator" content={siteConfig.social.twitter} />
       <meta name="twitter:title" content={siteTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullImage} />
@@ -79,7 +71,7 @@ export function SEO({
       <meta name="apple-mobile-web-app-title" content="CodeCandy" />
       <meta name="format-detection" content="telephone=no" />
       <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="theme-color" content="#3B82F6" />
+      <meta name="theme-color" content={siteConfig.themeColor} />
       
       {/* Favicon Tags */}
       <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -105,19 +97,19 @@ export function SEO({
           },
           "author": {
             "@type": "Person",
-            "name": "Harsh Surani",
-            "url": "https://suraniharsh.codes",
+            "name": siteConfig.author.name,
+            "url": siteConfig.author.url,
             "sameAs": [
-              "https://twitter.com/suraniharsh",
-              "https://github.com/suraniharsh"
+              `https://twitter.com/${siteConfig.social.twitter.replace('@', '')}`,
+              `https://github.com/${siteConfig.social.github}`
             ]
           },
           "publisher": {
             "@type": "Organization",
-            "name": "CodeCandy",
+            "name": siteConfig.openGraph.siteName,
             "logo": {
               "@type": "ImageObject",
-              "url": `${baseUrl}/logo.png`
+              "url": `${siteConfig.baseUrl}/logo.png`
             }
           },
           ...(publishedAt && {

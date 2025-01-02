@@ -6,9 +6,17 @@ Allow: /
 Disallow: /login
 Disallow: /settings
 Disallow: /profile
+Disallow: /api/
+Disallow: /admin/
+
+# Important routes
+Allow: /collections
+Allow: /search
+Allow: /snippet
+Allow: /about
 
 # Sitemap location
 Sitemap: https://codecandy.suraniharsh.codes/sitemap.xml
 
-# Crawl-delay
+# Rate limiting
 Crawl-delay: 10 

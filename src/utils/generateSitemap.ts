@@ -2,6 +2,7 @@ import { SitemapStream, streamToPromise } from 'sitemap';
 import { Readable } from 'stream';
 import { db } from '../config/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import { siteConfig } from '../config/meta';
 
 interface SitemapUrl {
   url: string;
@@ -12,7 +13,6 @@ interface SitemapUrl {
 
 export async function generateSitemap(): Promise<string> {
   try {
-    const baseUrl = 'https://codecandy.suraniharsh.codes';
     const urls: SitemapUrl[] = [];
 
     // Add static pages
@@ -25,7 +25,7 @@ export async function generateSitemap(): Promise<string> {
     ] as const;
 
     urls.push(...staticPages.map(page => ({
-      url: `${baseUrl}${page.url}`,
+      url: `${siteConfig.baseUrl}${page.url}`,
       changefreq: page.changefreq,
       priority: page.priority,
       lastmod: new Date().toISOString()
@@ -39,7 +39,7 @@ export async function generateSitemap(): Promise<string> {
     collectionsSnapshot.forEach(doc => {
       const data = doc.data();
       urls.push({
-        url: `${baseUrl}/collections/${doc.id}`,
+        url: `${siteConfig.baseUrl}/collections/${doc.id}`,
         changefreq: 'weekly',
         priority: 0.8,
         lastmod: new Date(data.updatedAt || data.createdAt).toISOString()
@@ -54,7 +54,7 @@ export async function generateSitemap(): Promise<string> {
     snippetsSnapshot.forEach(doc => {
       const data = doc.data();
       urls.push({
-        url: `${baseUrl}/snippet/${doc.id}`,
+        url: `${siteConfig.baseUrl}/snippet/${doc.id}`,
         changefreq: 'weekly',
         priority: 0.7,
         lastmod: new Date(data.updatedAt || data.createdAt).toISOString()
@@ -63,7 +63,7 @@ export async function generateSitemap(): Promise<string> {
 
     // Create sitemap
     const stream = new SitemapStream({
-      hostname: baseUrl,
+      hostname: siteConfig.baseUrl,
       xmlns: {
         news: false,
         xhtml: false,
