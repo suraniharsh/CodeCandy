@@ -107,7 +107,7 @@ export function Home() {
 
               <Link
                 to="/create"
-                className="inline-flex items-center px-4 py-2 text-white rounded-md bg-primary-500 hover:bg-primary-600 transition-smooth"
+                className="inline-flex items-center px-4 py-2 text-white truncate rounded-md bg-primary-500 hover:bg-primary-600 transition-smooth"
                 rel="noopener noreferrer"
               >
                 <FiPlus className="mr-2" />
