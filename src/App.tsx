@@ -65,7 +65,7 @@ function AppContent() {
   }
 
   return (
-    <div className="flex min-h-screen bg-dark-900 text-dark-100">
+    <div className="flex min-h-screen max-w-[95vw] bg-dark-900 text-dark-100">
       <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="flex-1">
         <Navbar onSidebarToggle={setIsSidebarOpen} />
