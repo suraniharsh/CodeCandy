@@ -23,37 +23,12 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
     return (
       <div className="flex flex-col items-center gap-2 p-2 ml-auto md:flex-row sm:gap-3">
         <Link
-          to="/search"
-          className="p-2 transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 sm:hidden"
-          rel="noopener noreferrer"
-        >
-          <FiSearch className="w-5 h-5" />
-        </Link>
-
-        <button
-          onClick={() => setIsShortcutsOpen(true)}
-          type="button"
-          className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors w-full md:w-max"
-        >
-          <span className="text-sm">Shortcuts</span>
-          <span className="text-xs text-dark-400">(Ctrl + /)</span>
-        </button>
-
-        <Link
           to="/create"
           className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex-shrink-0 w-full md:w-max text-center"
           rel="noopener noreferrer"
         >
           <FiPlus className="w-4 h-4" />
           <span className="text-sm">New Snippet</span>
-        </Link>
-
-        <Link
-          to="/create"
-          className="p-2 transition-colors rounded-lg sm:hidden text-dark-300 hover:text-dark-100 hover:bg-dark-700/50"
-          rel="noopener noreferrer"
-        >
-          <FiPlus className="w-5 h-5" />
         </Link>
 
         {user ? (
@@ -158,8 +133,24 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
 
           {/* Right section */}
           <div className="hidden md:block">{rightSection()}</div>
-          <div className="relative block w-[10rem] md:hidden">
-            <div className="relative p-8 group">
+          <div className="absolute right-0 flex items-center justify-end w-full ml-auto md:hidden">
+            <Link
+              to="/search"
+              className="p-2 transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 sm:hidden"
+              rel="noopener noreferrer"
+            >
+              <FiSearch className="w-5 h-5" />
+            </Link>
+            <button
+              onClick={() => setIsShortcutsOpen(true)}
+              type="button"
+              className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors w-max"
+            >
+              <span className="text-sm">Shortcuts</span>
+              <span className="text-xs text-dark-400">(Ctrl + /)</span>
+            </button>
+
+            <div className="relative group">
               <div
                 className="w-full p-2 text-center transition-colors border rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50"
                 title="Mouse over to see menu"
