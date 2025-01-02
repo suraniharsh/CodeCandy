@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { FiGithub, FiCoffee, FiCode, FiShare2, FiStar } from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { FiGithub, FiCoffee, FiCode, FiShare2, FiStar } from "react-icons/fi";
 
 interface Contributor {
   login: string;
@@ -61,52 +61,61 @@ export function About(): React.ReactElement {
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [loading, setLoading] = useState(true);
   const [starCount, setStarCount] = useState<number>(0);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   const aboutRef = React.useRef(null);
   const openSourceRef = React.useRef(null);
   const supportRef = React.useRef(null);
 
   const isAboutInView = useInView(aboutRef, { once: true, margin: "-20%" });
-  const isOpenSourceInView = useInView(openSourceRef, { once: true, margin: "-20%" });
+  const isOpenSourceInView = useInView(openSourceRef, {
+    once: true,
+    margin: "-20%",
+  });
   const isSupportInView = useInView(supportRef, { once: true, margin: "-20%" });
 
   useEffect(() => {
     const fetchGitHubData = async () => {
       setLoading(true);
-      setError('');
+      setError("");
 
       try {
         // Fetch repository data
-        const repoResponse = await fetch('https://api.github.com/repos/suraniharsh/CodeCandy', {
-          headers: {
-            'Accept': 'application/vnd.github.v3+json'
+        const repoResponse = await fetch(
+          "https://api.github.com/repos/suraniharsh/CodeCandy",
+          {
+            headers: {
+              Accept: "application/vnd.github.v3+json",
+            },
           }
-        });
+        );
 
         if (!repoResponse.ok) {
-          throw new Error('Failed to fetch repository data');
+          throw new Error("Failed to fetch repository data");
         }
 
         const repoData = await repoResponse.json();
         setStarCount(repoData.stargazers_count);
 
         // Fetch contributors
-        const contributorsResponse = await fetch('https://api.github.com/repos/suraniharsh/CodeCandy/contributors', {
-          headers: {
-            'Accept': 'application/vnd.github.v3+json'
+        const contributorsResponse = await fetch(
+          "https://api.github.com/repos/suraniharsh/CodeCandy/contributors",
+          {
+            headers: {
+              Accept: "application/vnd.github.v3+json",
+            },
           }
-        });
+        );
 
         if (!contributorsResponse.ok) {
-          throw new Error('Failed to fetch contributors');
+          throw new Error("Failed to fetch contributors");
         }
 
         const contributorsData = await contributorsResponse.json();
         setContributors(contributorsData);
       } catch (err) {
-        console.error('Error fetching GitHub data:', err);
-        setError('Failed to load GitHub data');
+        console.error("Error fetching GitHub data:", err);
+        setError("Failed to load GitHub data");
         // Set fallback data
         setStarCount(0);
         setContributors([]);
@@ -134,7 +143,7 @@ export function About(): React.ReactElement {
         About CodeCandy
       </motion.h1>
 
-      <div className="space-y-6">
+      <div className="flex flex-wrap space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
           <motion.div
             ref={aboutRef}
@@ -147,10 +156,14 @@ export function About(): React.ReactElement {
               <motion.section variants={sectionVariants}>
                 <div className="flex items-start gap-6">
                   <div className="flex-1">
-                    <h2 className="mb-3 text-xl font-semibold text-primary-400">Our Mission</h2>
+                    <h2 className="mb-3 text-xl font-semibold text-primary-400">
+                      Our Mission
+                    </h2>
                     <p className="leading-relaxed text-dark-200">
-                      CodeCandy is your personal code snippet manager, designed to help developers organize and share their most useful code snippets.
-                      We believe in making code reusability simple and efficient.
+                      CodeCandy is your personal code snippet manager, designed
+                      to help developers organize and share their most useful
+                      code snippets. We believe in making code reusability
+                      simple and efficient.
                     </p>
                   </div>
                   <img
@@ -164,14 +177,16 @@ export function About(): React.ReactElement {
               <motion.section variants={sectionVariants}>
                 <div className="flex items-start gap-6">
                   <div className="flex-1">
-                    <h2 className="mb-3 text-xl font-semibold text-primary-400">Features</h2>
+                    <h2 className="mb-3 text-xl font-semibold text-primary-400">
+                      Features
+                    </h2>
                     <motion.ul className="space-y-2 list-disc list-inside text-dark-200">
                       {[
                         "Organize code snippets into collections",
                         "Syntax highlighting for multiple languages",
                         "Quick search and filtering",
                         "Share snippets with other developers",
-                        "Keyboard shortcuts for power users"
+                        "Keyboard shortcuts for power users",
                       ].map((feature, index) => (
                         <motion.li
                           key={index}
@@ -192,10 +207,16 @@ export function About(): React.ReactElement {
               </motion.section>
 
               <motion.section variants={sectionVariants}>
-                <h2 className="mb-3 text-xl font-semibold text-primary-400">Contact</h2>
+                <h2 className="mb-3 text-xl font-semibold text-primary-400">
+                  Contact
+                </h2>
                 <p className="leading-relaxed text-dark-200">
-                  Have questions or suggestions? Feel free to reach out to our team at{' '}
-                  <a href="mailto:hello@suraniharsh.codes" className="text-primary-400 hover:text-primary-300">
+                  Have questions or suggestions? Feel free to reach out to our
+                  team at{" "}
+                  <a
+                    href="mailto:hello@suraniharsh.codes"
+                    className="text-primary-400 hover:text-primary-300"
+                  >
                     hello@suraniharsh.codes
                   </a>
                 </p>
@@ -214,10 +235,14 @@ export function About(): React.ReactElement {
               <motion.section variants={sectionVariants}>
                 <div className="flex items-start justify-between gap-6">
                   <div className="flex-1">
-                    <h2 className="mb-3 text-xl font-semibold text-primary-400">Open Source</h2>
+                    <h2 className="mb-3 text-xl font-semibold text-primary-400">
+                      Open Source
+                    </h2>
                     <p className="leading-relaxed text-dark-200">
-                      CodeCandy is proudly open source and built by the community. We believe in transparency and collaboration,
-                      making our codebase accessible to everyone who wants to contribute or learn.
+                      CodeCandy is proudly open source and built by the
+                      community. We believe in transparency and collaboration,
+                      making our codebase accessible to everyone who wants to
+                      contribute or learn.
                     </p>
                   </div>
                   <motion.div
@@ -233,9 +258,13 @@ export function About(): React.ReactElement {
                     >
                       <FiStar className="w-5 h-5 text-yellow-400" />
                       {loading ? (
-                        <span className="text-sm text-dark-300">Loading...</span>
+                        <span className="text-sm text-dark-300">
+                          Loading...
+                        </span>
                       ) : error ? (
-                        <span className="text-sm text-red-400">Error loading stars</span>
+                        <span className="text-sm text-red-400">
+                          Error loading stars
+                        </span>
                       ) : (
                         <>
                           <span className="font-medium">{starCount}</span>
@@ -248,7 +277,9 @@ export function About(): React.ReactElement {
               </motion.section>
 
               <motion.section variants={sectionVariants}>
-                <h2 className="mb-3 text-xl font-semibold text-primary-400">Contributors</h2>
+                <h2 className="mb-3 text-xl font-semibold text-primary-400">
+                  Contributors
+                </h2>
                 <div className="flex flex-wrap gap-4">
                   {loading ? (
                     <div className="flex items-center gap-2 text-dark-200">
@@ -299,18 +330,24 @@ export function About(): React.ReactElement {
           variants={containerVariants}
           initial="hidden"
           animate={isSupportInView ? "visible" : "hidden"}
-          className="p-6 rounded-lg bg-dark-800"
+          className="w-full p-6 rounded-lg bg-dark-800"
         >
-          <motion.section variants={sectionVariants} className="max-w-3xl mx-auto text-center">
-            <h2 className="mb-4 text-2xl font-semibold text-primary-400">Support CodeCandy</h2>
+          <motion.section
+            variants={sectionVariants}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <h2 className="mb-4 text-2xl font-semibold text-primary-400">
+              Support CodeCandy
+            </h2>
             <p className="mb-6 leading-relaxed text-dark-200">
-              Help us make CodeCandy better for everyone. Join our community and contribute to the future of code sharing.
+              Help us make CodeCandy better for everyone. Join our community and
+              contribute to the future of code sharing.
             </p>
             <div className="grid gap-6 mb-8 md:grid-cols-3">
               {[
                 { text: "Star our repository", icon: <FiStar /> },
                 { text: "Report bugs and features", icon: <FiCode /> },
-                { text: "Share with developers", icon: <FiShare2 /> }
+                { text: "Share with developers", icon: <FiShare2 /> },
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -357,4 +394,4 @@ export function About(): React.ReactElement {
       </div>
     </motion.div>
   );
-} 
+}
