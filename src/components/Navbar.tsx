@@ -147,8 +147,10 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
             </div>
           </div>
 
-          {/* Right section */}
+          {/* Right section desktop */}
           <div className="hidden md:block">{rightSection()}</div>
+
+          {/* Right section mobile */}
           <div className="absolute right-0 flex items-center justify-end w-full ml-auto md:hidden">
             <div className="flex items-center justify-end w-full ml-auto md:hidden">
               <Link
