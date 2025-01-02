@@ -155,7 +155,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
         <div className="relative block w-[10rem] md:hidden">
           <div className="relative p-8 group">
             <div
-              className="w-full p-2 text-center transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50"
+              className="w-full p-2 text-center transition-colors border rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50"
               title="Mouse over to see menu"
             >
               MENU
