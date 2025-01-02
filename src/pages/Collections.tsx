@@ -37,11 +37,11 @@ function Collections() {
     try {
       setLoading(true);
       console.log('Loading shared collection:', id, 'User:', user?.uid);
-      
+
       // First, try to get the collection
       const collection = await snippetService.getCollectionById(id);
       console.log('Found collection:', collection);
-      
+
       if (!collection) {
         console.log('Collection not found');
         toast.error('Collection not found');
@@ -97,7 +97,7 @@ function Collections() {
       setLoading(true);
       const fetchedCollections = await snippetService.getAllCollections();
       setCollections(fetchedCollections);
-      
+
       // Load snippet counts for each collection
       const counts: Record<string, number> = {};
       await Promise.all(
@@ -119,7 +119,7 @@ function Collections() {
       console.log('Loading snippets for collection:', collectionId);
       const loadedSnippets = await snippetService.getSnippetsByCollectionId(collectionId);
       console.log('Loaded snippets:', loadedSnippets);
-      
+
       if (!loadedSnippets || loadedSnippets.length === 0) {
         console.log('No snippets found for collection');
         setSnippets([]);
@@ -168,7 +168,7 @@ function Collections() {
   const handleDeleteCollection = async (collectionId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this collection? All snippets in this collection will also be deleted.')) return;
-    
+
     try {
       await snippetService.deleteCollection(collectionId);
       if (selectedCollection?.id === collectionId) {
@@ -189,7 +189,7 @@ function Collections() {
 
   const handleTogglePublic = async (collection: Collection) => {
     if (isTogglingPublic) return;
-    
+
     try {
       setIsTogglingPublic(true);
       const updatedCollection = {
@@ -197,18 +197,18 @@ function Collections() {
         isPublic: !collection.isPublic
       };
       await snippetService.updateCollection(updatedCollection);
-      
+
       // Update the collection in state
       setShareCollection(updatedCollection);
-      setCollections(prevCollections => 
-        prevCollections.map(c => 
+      setCollections(prevCollections =>
+        prevCollections.map(c =>
           c.id === collection.id ? updatedCollection : c
         )
       );
-      
+
       toast.success(
-        updatedCollection.isPublic 
-          ? 'Collection is now public' 
+        updatedCollection.isPublic
+          ? 'Collection is now public'
           : 'Collection is now private'
       );
     } catch (error) {
@@ -228,9 +228,9 @@ function Collections() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-dark-100">Collections</h1>
+    <div className="flex flex-col items-center justify-center md:justify-start w-full mx-auto  min-w-[18rem]">
+      <div className="flex justify-between mb-6 mr-auto items-left">
+        <h1 className="mr-auto text-3xl font-bold text-dark-100">Collections</h1>
 
         <div className="flex space-x-3">
           {user && (
@@ -242,10 +242,10 @@ function Collections() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="flex flex-col w-full gap-6">
         {/* Collections Sidebar */}
         <div className="lg:col-span-1">
-          <div className="bg-dark-800 rounded-lg border border-dark-700 shadow-xl overflow-hidden">
+          <div className="overflow-hidden border rounded-lg shadow-xl bg-dark-800 border-dark-700">
             <div className="p-4 border-b border-dark-700 bg-dark-700/50">
               <h2 className="text-lg font-semibold text-dark-100">Your Collections</h2>
             </div>
@@ -253,18 +253,17 @@ function Collections() {
               {collections.map((collection) => (
                 <div
                   key={collection.id}
-                  className={`w-full text-left p-4 transition-smooth group relative hover:translate-x-1 cursor-pointer ${
-                    selectedCollection?.id === collection.id
+                  className={`w-full text-left p-4 transition-smooth group relative hover:translate-x-1 cursor-pointer ${selectedCollection?.id === collection.id
                       ? 'bg-primary-900/20 text-primary-400 hover:bg-primary-900/30'
                       : 'text-dark-300 hover:bg-dark-700/50'
-                  }`}
+                    }`}
                   onClick={() => setSelectedCollection(collection)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <FiFolder className={`h-5 w-5 ${selectedCollection?.id === collection.id ? 'text-primary-400' : 'text-dark-400'}`} />
                       <div>
-                        <span className="font-medium block">{collection.name}</span>
+                        <span className="block font-medium">{collection.name}</span>
                         <span className="text-sm text-dark-400">
                           {snippetCounts[collection.id] || 0} snippets
                         </span>
@@ -273,15 +272,15 @@ function Collections() {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={(e) => handleShareCollection(collection, e)}
-                        className="opacity-0 group-hover:opacity-100 text-dark-400 hover:text-primary-400 transition-smooth p-1 hover:bg-dark-600 rounded"
+                        className="p-1 rounded opacity-0 group-hover:opacity-100 text-dark-400 hover:text-primary-400 transition-smooth hover:bg-dark-600"
                       >
-                        <FiShare2 className="h-4 w-4" />
+                        <FiShare2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={(e) => handleDeleteCollection(collection.id, e)}
-                        className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-smooth p-1 hover:bg-dark-600 rounded"
+                        className="p-1 text-red-400 rounded opacity-0 group-hover:opacity-100 hover:text-red-300 transition-smooth hover:bg-dark-600"
                       >
-                        <FiTrash2 className="h-4 w-4" />
+                        <FiTrash2 className="w-4 h-4" />
                       </button>
                       <FiChevronRight className={`h-4 w-4 transition-transform ${selectedCollection?.id === collection.id ? 'rotate-90 text-primary-400' : 'text-dark-500'}`} />
                     </div>
@@ -291,11 +290,11 @@ function Collections() {
 
               {collections.length === 0 && (
                 <div className="p-8 text-center">
-                  <FiFolder className="h-12 w-12 mx-auto mb-4 text-dark-400" />
-                  <p className="text-dark-400 mb-2">No collections yet</p>
+                  <FiFolder className="w-12 h-12 mx-auto mb-4 text-dark-400" />
+                  <p className="mb-2 text-dark-400">No collections yet</p>
                   <button
                     onClick={() => setShowCollectionModal(true)}
-                    className="text-primary-400 hover:text-primary-300 transition-smooth text-sm"
+                    className="text-sm text-primary-400 hover:text-primary-300 transition-smooth"
                   >
                     Create your first collection
                   </button>
@@ -308,9 +307,9 @@ function Collections() {
         {/* Snippets Grid */}
         <div className="lg:col-span-3">
           {selectedCollection ? (
-            <div className="bg-dark-800 rounded-lg border border-dark-700 shadow-xl p-6">
+            <div className="p-6 border rounded-lg shadow-xl bg-dark-800 border-dark-700">
               <div className="mb-6">
-                <h2 className="text-xl font-semibold text-dark-100 mb-2">
+                <h2 className="mb-2 text-xl font-semibold text-dark-100">
                   {selectedCollection.name}
                 </h2>
                 <p className="text-dark-300">
@@ -318,19 +317,19 @@ function Collections() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {snippets.map((snippet) => (
                   <SnippetCard key={snippet.id} snippet={snippet} />
                 ))}
               </div>
 
               {snippets.length === 0 && (
-                <div className="text-center py-12">
-                  <FiCode className="h-12 w-12 mx-auto mb-4 text-dark-400" />
-                  <p className="text-dark-400 mb-2">No snippets in this collection</p>
+                <div className="py-12 text-center">
+                  <FiCode className="w-12 h-12 mx-auto mb-4 text-dark-400" />
+                  <p className="mb-2 text-dark-400">No snippets in this collection</p>
                   <button
                     onClick={() => setShowSnippetModal(true)}
-                    className="text-primary-400 hover:text-primary-300 transition-smooth text-sm"
+                    className="text-sm text-primary-400 hover:text-primary-300 transition-smooth"
                   >
                     Add your first snippet
                   </button>
@@ -338,9 +337,9 @@ function Collections() {
               )}
             </div>
           ) : (
-            <div className="bg-dark-800 rounded-lg border border-dark-700 shadow-xl p-12 text-center">
-              <FiFolder className="h-16 w-16 mx-auto mb-4 text-dark-400" />
-              <h2 className="text-xl font-semibold text-dark-100 mb-2">
+            <div className="p-12 text-center border rounded-lg shadow-xl bg-dark-800 border-dark-700">
+              <FiFolder className="w-16 h-16 mx-auto mb-4 text-dark-400" />
+              <h2 className="mb-2 text-xl font-semibold text-dark-100">
                 Select a Collection
               </h2>
               <p className="text-dark-400">
@@ -384,10 +383,10 @@ function Collections() {
       >
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-medium text-dark-100 mb-2">
+            <h3 className="mb-2 text-lg font-medium text-dark-100">
               Share "{shareCollection?.name}"
             </h3>
-            <p className="text-dark-400 text-sm">
+            <p className="text-sm text-dark-400">
               Share this collection with others. They will be able to view and copy all snippets in this collection.
             </p>
           </div>
@@ -397,14 +396,14 @@ function Collections() {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  className="form-checkbox bg-dark-700 border-dark-600 text-primary-500 rounded focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded form-checkbox bg-dark-700 border-dark-600 text-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   checked={shareCollection?.isPublic || false}
                   onChange={() => shareCollection && handleTogglePublic(shareCollection)}
                   disabled={isTogglingPublic}
                 />
                 <span className="text-dark-200">Make collection public</span>
               </label>
-              <p className="text-dark-400 text-sm mt-1 ml-6">
+              <p className="mt-1 ml-6 text-sm text-dark-400">
                 Anyone with the link can view this collection
               </p>
             </div>
@@ -413,10 +412,10 @@ function Collections() {
               <input
                 type="text"
                 readOnly
-                value={shareCollection?.isPublic 
+                value={shareCollection?.isPublic
                   ? `${window.location.origin}/collections/${shareCollection?.id}`
                   : 'Make the collection public to get a shareable link'}
-                className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-dark-100 pr-20"
+                className="w-full px-3 py-2 pr-20 border rounded-md bg-dark-700 border-dark-600 text-dark-100"
               />
               {shareCollection?.isPublic && (
                 <button
@@ -424,7 +423,7 @@ function Collections() {
                     navigator.clipboard.writeText(`${window.location.origin}/collections/${shareCollection?.id}`);
                     toast.success('Link copied to clipboard');
                   }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 transition-smooth text-sm"
+                  className="absolute px-3 py-1 text-sm text-white -translate-y-1/2 rounded right-2 top-1/2 bg-primary-500 hover:bg-primary-600 transition-smooth"
                 >
                   Copy
                 </button>
@@ -432,7 +431,7 @@ function Collections() {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
+          <div className="flex justify-end pt-4 space-x-3">
             <button
               onClick={() => setShowShareModal(false)}
               className="px-4 py-2 text-dark-300 hover:text-dark-100 transition-smooth"
@@ -446,4 +445,4 @@ function Collections() {
   );
 }
 
-export default Collections; 
+export default Collections;
