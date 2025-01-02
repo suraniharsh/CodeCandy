@@ -4,7 +4,11 @@ import { FiPlus } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { snippetService, type Snippet } from '../services/snippetService';
 import { SnippetCard } from '../components';
-import { AnimatedPage, containerVariants, itemVariants } from '../components/AnimatedPage';
+import {
+  AnimatedPage,
+  containerVariants,
+  itemVariants,
+} from '../components/AnimatedPage';
 import { SEO } from '../components/SEO';
 
 export function Home() {
@@ -17,7 +21,7 @@ export function Home() {
         const snippets = await snippetService.getAllSnippets();
         setRecentSnippets(snippets.slice(0, 6));
       } catch (error) {
-        console.error('Error loading snippets:', error);
+        console.error("Error loading snippets:", error);
       } finally {
         setLoading(false);
       }
@@ -36,25 +40,33 @@ export function Home() {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="CodeCandy - Your Personal Code Snippet Manager"
         description="Save, organize, and share your code snippets with syntax highlighting, collections, and instant search. The modern way to manage your code snippets."
       />
-      <AnimatedPage className="p-4 sm:p-6">
+
+      <AnimatedPage className="flex flex-col w-full p-4 md:p-6">
         <motion.div variants={itemVariants} className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <motion.h1 variants={itemVariants} className="text-3xl font-bold text-dark-100 mb-2">
+          <div className="flex flex-col items-start justify-between gap-4 mb-4 md:gap-8 md:flex-row md:items-center">
+            <div className="w-full max-w-prose">
+              <motion.h1
+                variants={itemVariants}
+                className="mb-2 text-2xl font-bold sm:text-3xl text-dark-100"
+              >
                 Welcome to CodeCandy
               </motion.h1>
-              <motion.p variants={itemVariants} className="text-dark-300">
-                Your personal code snippet manager. Save, organize, and share your code snippets.
+
+              <motion.p variants={itemVariants} className="text-sm text-dark-300 sm:text-base">
+                Your personal code snippet manager. Save, organize, and share
+                your code snippets.
               </motion.p>
             </div>
-            <motion.div variants={itemVariants}>
+
+            <motion.div variants={itemVariants} className="w-full sm:w-auto">
               <Link
                 to="/create"
-                className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-smooth flex items-center shadow-lg hover:shadow-xl"
+                className="flex items-center justify-center w-full px-4 py-2 text-white truncate rounded-md shadow-lg sm:w-auto bg-primary-500 hover:bg-primary-600 transition-smooth hover:shadow-xl"
+                rel="noopener noreferrer"
               >
                 <FiPlus className="mr-2" />
                 New Snippet
@@ -65,14 +77,19 @@ export function Home() {
 
         <motion.div variants={containerVariants}>
           <div className="flex items-center justify-between mb-4">
-            <motion.h2 variants={itemVariants} className="text-xl font-semibold text-dark-200">
+            <motion.h2
+              variants={itemVariants}
+              className="text-xl font-semibold text-dark-200"
+            >
               Recent Snippets
             </motion.h2>
+
             {recentSnippets.length > 0 && (
               <motion.div variants={itemVariants}>
                 <Link
                   to="/search"
                   className="text-primary-400 hover:text-primary-300 transition-smooth"
+                  rel="noopener noreferrer"
                 >
                   View all snippets
                 </Link>
@@ -83,12 +100,16 @@ export function Home() {
           {recentSnippets.length === 0 ? (
             <motion.div
               variants={itemVariants}
-              className="bg-dark-800 rounded-lg border border-dark-700 p-8 text-center"
+              className="flex flex-col items-center justify-center w-full p-8 text-center border rounded-lg bg-dark-800 border-dark-700"
             >
-              <p className="text-dark-400 mb-4">No snippets yet. Create your first snippet to get started!</p>
+              <p className="mb-4 text-dark-400">
+                No snippets yet. Create your first snippet to get started!
+              </p>
+
               <Link
                 to="/create"
-                className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-smooth"
+                className="inline-flex items-center px-4 py-2 text-white truncate rounded-md bg-primary-500 hover:bg-primary-600 transition-smooth"
+                rel="noopener noreferrer"
               >
                 <FiPlus className="mr-2" />
                 Create Snippet
@@ -97,7 +118,7 @@ export function Home() {
           ) : (
             <motion.div
               variants={containerVariants}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
             >
               {recentSnippets.map((snippet) => (
                 <SnippetCard key={snippet.id} snippet={snippet} />
@@ -110,4 +131,4 @@ export function Home() {
   );
 }
 
-export default Home; 
+export default Home;
