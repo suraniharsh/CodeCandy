@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FiMenu, FiX, FiSearch, FiPlus } from 'react-icons/fi';
-import { useAuth } from '../contexts/AuthContext';
-import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { FiMenu, FiX, FiSearch, FiPlus } from "react-icons/fi";
+import { useAuth } from "../contexts/AuthContext";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 
 interface NavbarProps {
   onSidebarToggle: (isOpen: boolean) => void;
@@ -20,13 +20,14 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 h-16 border-b bg-dark-800 border-dark-700">
-      <div className="flex items-center justify-between h-full px-3 sm:px-4">
+    <nav className="fixed top-0 left-0 right-0 z-40 w-screen h-16 border-b bg-dark-800 border-dark-700">
+      <div className="max-w-[100rem] flex items-center justify-between h-full px-3 sm:px-4">
         {/* Left section */}
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 mr-auto sm:gap-4">
           <button
             onClick={handleSidebarToggle}
             className="p-2 transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50"
+            type="button"
             aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
           >
             {isSidebarOpen ? (
@@ -39,6 +40,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
           <Link
             to="/"
             className="hidden text-lg font-bold sm:text-xl text-dark-100 sm:block"
+            rel="noopener noreferrer"
           >
             CodeCandy
           </Link>
@@ -57,16 +59,18 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
         </div>
 
         {/* Right section */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 ml-auto sm:gap-3">
           <Link
             to="/search"
             className="p-2 transition-colors rounded-lg text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 sm:hidden"
+            rel="noopener noreferrer"
           >
             <FiSearch className="w-5 h-5" />
           </Link>
 
           <button
             onClick={() => setIsShortcutsOpen(true)}
+            type="button"
             className="flex items-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
           >
             <span className="text-sm">Shortcuts</span>
@@ -75,7 +79,8 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
 
           <Link
             to="/create"
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors"
+            className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex-shrink-0"
+            rel="noopener noreferrer"
           >
             <FiPlus className="w-4 h-4" />
             <span className="text-sm">New Snippet</span>
@@ -84,23 +89,29 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
           <Link
             to="/create"
             className="p-2 transition-colors rounded-lg sm:hidden text-dark-300 hover:text-dark-100 hover:bg-dark-700/50"
+            rel="noopener noreferrer"
           >
             <FiPlus className="w-5 h-5" />
           </Link>
 
           {user ? (
             <div className="relative group">
-              <button className="w-8 h-8 overflow-hidden transition-colors border-2 border-transparent rounded-full sm:w-9 sm:h-9 hover:border-primary-500">
+              <button
+                className="w-8 h-8 overflow-hidden transition-colors border-2 border-transparent rounded-full sm:w-9 sm:h-9 hover:border-primary-500"
+                type="button"
+              >
                 <img
-                  src={user.photoURL || ''}
-                  alt={user.displayName || 'User'}
+                  src={user.photoURL || ""}
+                  alt={user.displayName || "User"}
                   className="object-cover w-full h-full"
                 />
               </button>
 
               <div className="absolute right-0 invisible w-48 py-1 mt-2 transition-all border rounded-lg shadow-xl opacity-0 top-full bg-dark-800 border-dark-700 group-hover:opacity-100 group-hover:visible">
                 <div className="px-4 py-2 border-b border-dark-700">
-                  <p className="text-sm font-medium truncate text-dark-100">{user.displayName}</p>
+                  <p className="text-sm font-medium truncate text-dark-100">
+                    {user.displayName}
+                  </p>
                   <p className="text-xs truncate text-dark-400">{user.email}</p>
                 </div>
                 <Link
@@ -118,6 +129,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
                 <button
                   onClick={signOut}
                   className="block w-full px-4 py-2 text-sm text-left text-red-400 transition-colors hover:bg-dark-700"
+                  type="button"
                 >
                   Sign Out
                 </button>
@@ -127,6 +139,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
             <Link
               to="/login"
               className="px-3 py-1.5 text-sm text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
+              rel="noopener noreferrer"
             >
               Sign In
             </Link>
@@ -135,4 +148,4 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
       </div>
     </nav>
   );
-} 
+}
