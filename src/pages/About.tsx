@@ -83,11 +83,11 @@ export function About(): React.ReactElement {
             'Accept': 'application/vnd.github.v3+json'
           }
         });
-        
+
         if (!repoResponse.ok) {
           throw new Error('Failed to fetch repository data');
         }
-        
+
         const repoData = await repoResponse.json();
         setStarCount(repoData.stargazers_count);
 
@@ -123,40 +123,40 @@ export function About(): React.ReactElement {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="max-w-7xl mx-auto"
+      className="mx-auto max-w-7xl"
     >
-      <motion.h1 
+      <motion.h1
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="text-3xl font-bold mb-6"
+        className="mb-6 text-3xl font-bold"
       >
         About CodeCandy
       </motion.h1>
-      
+
       <div className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-6">
-          <motion.div 
+        <div className="grid gap-6 md:grid-cols-2">
+          <motion.div
             ref={aboutRef}
             variants={containerVariants}
             initial="hidden"
             animate={isAboutInView ? "visible" : "hidden"}
             className="space-y-6"
           >
-            <div className="bg-dark-800 rounded-lg p-6 space-y-6">
+            <div className="p-6 space-y-6 rounded-lg bg-dark-800">
               <motion.section variants={sectionVariants}>
                 <div className="flex items-start gap-6">
                   <div className="flex-1">
-                    <h2 className="text-xl font-semibold mb-3 text-primary-400">Our Mission</h2>
-                    <p className="text-dark-200 leading-relaxed">
-                      CodeCandy is your personal code snippet manager, designed to help developers organize and share their most useful code snippets. 
+                    <h2 className="mb-3 text-xl font-semibold text-primary-400">Our Mission</h2>
+                    <p className="leading-relaxed text-dark-200">
+                      CodeCandy is your personal code snippet manager, designed to help developers organize and share their most useful code snippets.
                       We believe in making code reusability simple and efficient.
                     </p>
                   </div>
-                  <img 
-                    src="/images/mission.svg" 
-                    alt="Mission illustration" 
-                    className="w-24 h-24 object-contain hidden md:block"
+                  <img
+                    src="/images/mission.svg"
+                    alt="Mission illustration"
+                    className="hidden object-contain w-24 h-24 md:block"
                   />
                 </div>
               </motion.section>
@@ -164,8 +164,8 @@ export function About(): React.ReactElement {
               <motion.section variants={sectionVariants}>
                 <div className="flex items-start gap-6">
                   <div className="flex-1">
-                    <h2 className="text-xl font-semibold mb-3 text-primary-400">Features</h2>
-                    <motion.ul className="list-disc list-inside text-dark-200 space-y-2">
+                    <h2 className="mb-3 text-xl font-semibold text-primary-400">Features</h2>
+                    <motion.ul className="space-y-2 list-disc list-inside text-dark-200">
                       {[
                         "Organize code snippets into collections",
                         "Syntax highlighting for multiple languages",
@@ -183,17 +183,17 @@ export function About(): React.ReactElement {
                       ))}
                     </motion.ul>
                   </div>
-                  <img 
-                    src="/images/features.svg" 
-                    alt="Features illustration" 
-                    className="w-24 h-24 object-contain hidden md:block"
+                  <img
+                    src="/images/features.svg"
+                    alt="Features illustration"
+                    className="hidden object-contain w-24 h-24 md:block"
                   />
                 </div>
               </motion.section>
 
               <motion.section variants={sectionVariants}>
-                <h2 className="text-xl font-semibold mb-3 text-primary-400">Contact</h2>
-                <p className="text-dark-200 leading-relaxed">
+                <h2 className="mb-3 text-xl font-semibold text-primary-400">Contact</h2>
+                <p className="leading-relaxed text-dark-200">
                   Have questions or suggestions? Feel free to reach out to our team at{' '}
                   <a href="mailto:hello@suraniharsh.codes" className="text-primary-400 hover:text-primary-300">
                     hello@suraniharsh.codes
@@ -203,20 +203,20 @@ export function About(): React.ReactElement {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             ref={openSourceRef}
             variants={containerVariants}
             initial="hidden"
             animate={isOpenSourceInView ? "visible" : "hidden"}
             className="space-y-6"
           >
-            <div className="bg-dark-800 rounded-lg p-6 space-y-6">
+            <div className="p-6 space-y-6 rounded-lg bg-dark-800">
               <motion.section variants={sectionVariants}>
                 <div className="flex items-start justify-between gap-6">
                   <div className="flex-1">
-                    <h2 className="text-xl font-semibold mb-3 text-primary-400">Open Source</h2>
-                    <p className="text-dark-200 leading-relaxed">
-                      CodeCandy is proudly open source and built by the community. We believe in transparency and collaboration, 
+                    <h2 className="mb-3 text-xl font-semibold text-primary-400">Open Source</h2>
+                    <p className="leading-relaxed text-dark-200">
+                      CodeCandy is proudly open source and built by the community. We believe in transparency and collaboration,
                       making our codebase accessible to everyone who wants to contribute or learn.
                     </p>
                   </div>
@@ -229,7 +229,7 @@ export function About(): React.ReactElement {
                       href="https://github.com/harshhhdev/codecandy"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 transition-colors rounded-lg bg-dark-700 hover:bg-dark-600"
                     >
                       <FiStar className="w-5 h-5 text-yellow-400" />
                       {loading ? (
@@ -248,11 +248,11 @@ export function About(): React.ReactElement {
               </motion.section>
 
               <motion.section variants={sectionVariants}>
-                <h2 className="text-xl font-semibold mb-3 text-primary-400">Contributors</h2>
+                <h2 className="mb-3 text-xl font-semibold text-primary-400">Contributors</h2>
                 <div className="flex flex-wrap gap-4">
                   {loading ? (
                     <div className="flex items-center gap-2 text-dark-200">
-                      <div className="w-4 h-4 border-2 border-primary-400 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 border-2 rounded-full border-primary-400 border-t-transparent animate-spin"></div>
                       Loading contributors...
                     </div>
                   ) : error ? (
@@ -266,7 +266,7 @@ export function About(): React.ReactElement {
                         href={contributor.html_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group relative"
+                        className="relative group"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -275,8 +275,8 @@ export function About(): React.ReactElement {
                           alt={`${contributor.login}'s profile`}
                           className="w-12 h-12 rounded-full ring-2 ring-primary-400/50"
                         />
-                        <motion.div 
-                          className="absolute opacity-0 group-hover:opacity-100 bg-dark-900/90 text-white text-xs rounded px-2 py-1 -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
+                        <motion.div
+                          className="absolute px-2 py-1 text-xs text-white transform -translate-x-1/2 rounded opacity-0 group-hover:opacity-100 bg-dark-900/90 -bottom-8 left-1/2 whitespace-nowrap"
                           initial={{ y: 5, opacity: 0 }}
                           whileHover={{ y: 0, opacity: 1 }}
                           transition={{ duration: 0.2 }}
@@ -299,14 +299,14 @@ export function About(): React.ReactElement {
           variants={containerVariants}
           initial="hidden"
           animate={isSupportInView ? "visible" : "hidden"}
-          className="bg-dark-800 rounded-lg p-6"
+          className="p-6 rounded-lg bg-dark-800"
         >
           <motion.section variants={sectionVariants} className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl font-semibold mb-4 text-primary-400">Support CodeCandy</h2>
-            <p className="text-dark-200 leading-relaxed mb-6">
+            <h2 className="mb-4 text-2xl font-semibold text-primary-400">Support CodeCandy</h2>
+            <p className="mb-6 leading-relaxed text-dark-200">
               Help us make CodeCandy better for everyone. Join our community and contribute to the future of code sharing.
             </p>
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid gap-6 mb-8 md:grid-cols-3">
               {[
                 { text: "Star our repository", icon: <FiStar /> },
                 { text: "Report bugs and features", icon: <FiCode /> },
@@ -315,7 +315,7 @@ export function About(): React.ReactElement {
                 <motion.div
                   key={index}
                   variants={listItemVariants}
-                  className="bg-dark-700/50 rounded-lg p-4 flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-2 p-4 rounded-lg bg-dark-700/50"
                 >
                   {item.icon}
                   <span>{item.text}</span>
@@ -323,25 +323,25 @@ export function About(): React.ReactElement {
               ))}
             </div>
             <div className="flex items-center justify-center gap-4">
-              <motion.div 
+              <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <a 
+                <a
                   href="https://github.com/suraniharsh/CodeCandy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-lg font-medium"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-lg font-medium text-white transition-colors rounded-lg bg-primary-500 hover:bg-primary-600"
                 >
                   <FiGithub className="w-5 h-5" />
                   Support on GitHub
                 </a>
               </motion.div>
-              <motion.div 
+              <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <a 
+                <a
                   href="https://www.buymeacoffee.com/suraniharsh"
                   target="_blank"
                   rel="noopener noreferrer"
