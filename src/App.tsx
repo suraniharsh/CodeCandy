@@ -33,7 +33,7 @@ function AppContent() {
     const hideLoader = () => {
       const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(0, minLoadTime - elapsedTime);
-      
+
       setTimeout(() => {
         setIsLoading(false);
       }, remainingTime);
@@ -65,7 +65,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-900 text-dark-100 flex">
+    <div className="flex min-h-screen bg-dark-900 text-dark-100">
       <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="flex-1">
         <Navbar onSidebarToggle={setIsSidebarOpen} />
@@ -74,12 +74,12 @@ function AppContent() {
           animate={{
             marginLeft: isSidebarOpen ? 240 : 72
           }}
-          transition={{ 
+          transition={{
             type: "spring",
             stiffness: 300,
             damping: 30
           }}
-          className="pt-16 min-h-screen"
+          className="min-h-screen pt-16"
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -89,7 +89,7 @@ function AppContent() {
               animate="enter"
               exit="exit"
               transition={{ duration: 0.2 }}
-              className="p-4 md:p-6 max-w-7xl mx-auto"
+              className="p-4 mx-auto md:p-6 max-w-7xl"
             >
               <Routes location={location} key={location.pathname}>
                 <Route path="/" element={<Home />} />
