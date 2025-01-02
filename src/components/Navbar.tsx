@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { FiMenu, FiX, FiSearch, FiPlus } from "react-icons/fi";
-import { useAuth } from "../contexts/AuthContext";
-import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FiMenu, FiX, FiSearch, FiPlus } from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 interface NavbarProps {
   onSidebarToggle: (isOpen: boolean) => void;

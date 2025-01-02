@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { FiPlus } from "react-icons/fi";
-import { motion } from "framer-motion";
-import { snippetService, type Snippet } from "../services/snippetService";
-import { SnippetCard } from "../components";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FiPlus } from 'react-icons/fi';
+import { motion } from 'framer-motion';
+import { snippetService, type Snippet } from '../services/snippetService';
+import { SnippetCard } from '../components';
 import {
   AnimatedPage,
   containerVariants,
   itemVariants,
-} from "../components/AnimatedPage";
-import { SEO } from "../components/SEO";
+} from '../components/AnimatedPage';
+import { SEO } from '../components/SEO';
 
 export function Home() {
   const [recentSnippets, setRecentSnippets] = useState<Snippet[]>([]);
