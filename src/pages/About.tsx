@@ -359,7 +359,7 @@ export function About(): React.ReactElement {
                 </motion.div>
               ))}
             </div>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -368,12 +368,13 @@ export function About(): React.ReactElement {
                   href="https://github.com/suraniharsh/CodeCandy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 text-lg font-medium text-white transition-colors rounded-lg bg-primary-500 hover:bg-primary-600"
+                  className="inline-flex items-center justify-center w-full gap-2 px-6 py-3 text-lg font-medium text-white transition-colors rounded-lg bg-primary-500 hover:bg-primary-600 min-w-[17rem]"
                 >
                   <FiGithub className="w-5 h-5" />
                   Support on GitHub
                 </a>
               </motion.div>
+
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -382,7 +383,7 @@ export function About(): React.ReactElement {
                   href="https://www.buymeacoffee.com/suraniharsh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFDD00] text-dark-900 rounded-lg hover:bg-[#FFDD00]/90 transition-colors text-lg font-medium"
+                  className="inline-flex items-center justify-center w-full gap-2 px-6 py-3 text-lg font-medium transition-colors rounded-lg bg-[#FFDD00] text-dark-900 hover:bg-[#FFDD00]/90 min-w-[17rem]"
                 >
                   <FiCoffee className="w-5 h-5" />
                   Buy me a coffee
