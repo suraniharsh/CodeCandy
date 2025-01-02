@@ -14,7 +14,7 @@ function Search() {
   const [loading, _setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const observer = useRef<IntersectionObserver>();
+  const observer = useRef<IntersectionObserver | null>(null);
 
   // Load all snippets initially
   useEffect(() => {

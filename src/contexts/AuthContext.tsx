@@ -1,22 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { 
   signInWithPopup, 
-  GoogleAuthProvider, 
   GithubAuthProvider,
   onAuthStateChanged, 
-  signOut as firebaseSignOut 
+  type User
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
-
-interface User {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-}
+import { authService, type UserProfile } from '../services/authService';
 
 interface AuthContextType {
-  user: User | null;
+  user: UserProfile | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithGithub: () => Promise<void>;
@@ -25,32 +18,37 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-        });
-      } else {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
+      try {
+        if (firebaseUser) {
+          const userProfile = await authService.createUserProfile(firebaseUser);
+          setUser(userProfile);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Error handling auth state change:', error);
         setUser(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const userProfile = await authService.signInWithGoogle();
+      if (!userProfile) {
+        throw new Error('Failed to get user profile');
+      }
+      setUser(userProfile);
     } catch (error) {
       console.error('Google sign-in error:', error);
       throw error;
@@ -60,7 +58,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGithub = async () => {
     const provider = new GithubAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const userProfile = await authService.createUserProfile(result.user);
+      setUser(userProfile);
     } catch (error) {
       console.error('GitHub sign-in error:', error);
       throw error;
@@ -69,7 +69,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      await firebaseSignOut(auth);
+      await authService.signOut();
+      setUser(null);
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;

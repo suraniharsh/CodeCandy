@@ -64,9 +64,17 @@ class AuthService {
   }
 
   async createUserProfile(user: User): Promise<UserProfile> {
+    if (!user.uid) {
+      console.error('Error: User UID is missing');
+      throw new Error('User UID is required to create profile');
+    }
+
     try {
       const userRef = doc(db, 'users', user.uid);
+      console.log('Attempting to get user document:', user.uid);
+      
       const userSnap = await getDoc(userRef);
+      console.log('User document exists:', userSnap.exists());
 
       const userProfile: UserProfile = {
         uid: user.uid,
@@ -79,11 +87,19 @@ class AuthService {
         lastLoginAt: new Date().toISOString(),
       };
 
+      console.log('Attempting to write user profile:', userProfile);
       await setDoc(userRef, userProfile, { merge: true });
+      console.log('Successfully wrote user profile to Firestore');
+      
       this.userProfile = userProfile;
       return userProfile;
     } catch (error) {
-      console.error('Error creating user profile:', error);
+      console.error('Detailed error creating user profile:', {
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        userId: user.uid,
+        userEmail: user.email
+      });
       throw error;
     }
   }
