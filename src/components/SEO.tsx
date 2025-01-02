@@ -57,8 +57,8 @@ export function SEO({
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content={siteConfig.social.twitter} />
-      <meta name="twitter:creator" content={siteConfig.social.twitter} />
+      <meta name="twitter:site" content={siteConfig.author.twitter} />
+      <meta name="twitter:creator" content={siteConfig.author.twitter} />
       <meta name="twitter:title" content={siteTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullImage} />
@@ -100,8 +100,10 @@ export function SEO({
             "name": siteConfig.author.name,
             "url": siteConfig.author.url,
             "sameAs": [
-              `https://twitter.com/${siteConfig.social.twitter.replace('@', '')}`,
-              `https://github.com/${siteConfig.social.github}`
+              siteConfig.author.twitter,
+              siteConfig.social.github,
+              siteConfig.social.linkedin,
+              siteConfig.social.instagram
             ]
           },
           "publisher": {
