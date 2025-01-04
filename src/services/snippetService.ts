@@ -20,6 +20,7 @@ export interface Collection {
   description: string;
   snippetIds: string[];
   createdAt: number;
+  updatedAt?:number;
   userId?: string;
   isPublic?: boolean;
 }
@@ -333,10 +334,12 @@ class SnippetService {
   }
 
   async updateSnippet(snippet: Snippet): Promise<void> {
+   
     if (auth.currentUser) {
       const docRef = doc(this.snippetsCollection, snippet.id);
       const { id, ...snippetData } = snippet;
       await updateDoc(docRef, snippetData);
+
     } else {
       const snippets = this.getLocalSnippets();
       const index = snippets.findIndex(s => s.id === snippet.id);

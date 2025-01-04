@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiClock, FiTag, FiHeart, FiShare2, FiCopy, FiTrash2 } from 'react-icons/fi';
+import { FiClock, FiTag, FiHeart, FiShare2, FiCopy, FiTrash2,FiEdit2 } from 'react-icons/fi';
 import { snippetService, type Snippet } from '../services/snippetService';
 import { useAuth } from '../contexts/AuthContext';
 import { CodeBlock } from '../components';
@@ -14,6 +14,7 @@ export default function SnippetView() {
   const [snippet, setSnippet] = useState<Snippet | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     if (!id) return;
@@ -102,6 +103,10 @@ export default function SnippetView() {
     }
   };
 
+  const handleEdit = () => {
+    if (!snippet) return;
+    navigate(`/edit/${snippet.id}`);
+  }
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -135,7 +140,7 @@ export default function SnippetView() {
               <div className="flex items-center gap-4 text-sm text-dark-400">
                 <div className="flex items-center">
                   <FiClock className="mr-1" />
-                  <span>{new Date(snippet.createdAt).toLocaleDateString()}</span>
+                 {<span>{snippet.updatedAt?new Date(snippet.updatedAt).toLocaleDateString() :new Date(snippet.createdAt).toLocaleDateString()}</span>}
                 </div>
                 <div className="flex items-center gap-2">
                   {snippet.tags.map((tag) => (
@@ -186,6 +191,15 @@ export default function SnippetView() {
                   title="Delete snippet"
                 >
                   <FiTrash2 className="h-5 w-5" />
+                </button>
+              )}
+              {isOwner && (
+                <button
+                  onClick={handleEdit}
+                  className="p-2 rounded-lg text-blue-400  hover:text-blue-300  hover:bg-red-400/10 transition-smooth"
+                  title="Edit snippet"
+                >
+                  <FiEdit2 className="h-5 w-5" />
                 </button>
               )}
             </div>

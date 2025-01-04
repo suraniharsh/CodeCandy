@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { Loader } from './components/Loader';
+import EditSnippet from './pages/EditSnippet';
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -104,6 +105,7 @@ function AppContent() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/about" element={<About />} />
+                <Route path='/edit/:id' element={<EditSnippet />} />
               </Routes>
             </motion.div>
           </AnimatePresence>
