@@ -89,7 +89,7 @@ export default function SnippetView() {
   };
 
   const handleDelete = async () => {
-    if (!snippet || !user) return;
+    if (!snippet) return;
     if (!window.confirm('Are you sure you want to delete this snippet?')) return;
 
     try {
@@ -114,7 +114,7 @@ export default function SnippetView() {
     return null;
   }
 
-  const isOwner = user?.uid === snippet.userId;
+  const isOwner = user?.uid === snippet.userId || snippet.id.startsWith('local_');
 
   return (
     <motion.div
