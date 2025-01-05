@@ -5,6 +5,7 @@ import { FiClock, FiTag, FiHeart, FiShare2, FiCopy, FiTrash2 } from 'react-icons
 import { snippetService, type Snippet } from '../services/snippetService';
 import { useAuth } from '../contexts/AuthContext';
 import { CodeBlock } from '../components';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { toast } from 'react-hot-toast';
 
 export default function SnippetView() {
@@ -14,6 +15,7 @@ export default function SnippetView() {
   const [snippet, setSnippet] = useState<Snippet | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -90,7 +92,6 @@ export default function SnippetView() {
 
   const handleDelete = async () => {
     if (!snippet) return;
-    if (!window.confirm('Are you sure you want to delete this snippet?')) return;
 
     try {
       await snippetService.deleteSnippet(snippet.id);
@@ -117,89 +118,99 @@ export default function SnippetView() {
   const isOwner = user?.uid === snippet.userId || snippet.id.startsWith('local_');
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="max-w-5xl mx-auto"
-    >
-      <div className="bg-dark-800 rounded-lg border border-dark-700 shadow-xl overflow-hidden">
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-dark-100 mb-2">
-                {snippet.title}
-              </h1>
-              <p className="text-dark-400 mb-4">
-                {snippet.description}
-              </p>
-              <div className="flex items-center gap-4 text-sm text-dark-400">
-                <div className="flex items-center">
-                  <FiClock className="mr-1" />
-                  <span>{new Date(snippet.createdAt).toLocaleDateString()}</span>
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-5xl mx-auto"
+      >
+        <div className="bg-dark-800 rounded-lg border border-dark-700 shadow-xl overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-dark-100 mb-2">
+                  {snippet.title}
+                </h1>
+                <p className="text-dark-400 mb-4">
+                  {snippet.description}
+                </p>
+                <div className="flex items-center gap-4 text-sm text-dark-400">
+                  <div className="flex items-center">
+                    <FiClock className="mr-1" />
+                    <span>{new Date(snippet.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {snippet.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center px-2 py-1 rounded-full bg-primary-900/20 text-primary-400"
+                      >
+                        <FiTag className="mr-1" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {snippet.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center px-2 py-1 rounded-full bg-primary-900/20 text-primary-400"
-                    >
-                      <FiTag className="mr-1" />
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {user && (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className={`p-2 rounded-lg transition-smooth ${
+                      isFavorite
+                        ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10'
+                        : 'text-dark-400 hover:text-dark-100 hover:bg-dark-700/50'
+                    }`}
+                    title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    <FiHeart className={`h-5 w-5 ${isFavorite ? 'fill-current' : ''}`} />
+                  </button>
+                )}
+                <button
+                  onClick={handleShare}
+                  className="p-2 rounded-lg text-dark-400 hover:text-dark-100 hover:bg-dark-700/50 transition-smooth"
+                  title="Share snippet"
+                >
+                  <FiShare2 className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={handleCopyCode}
+                  className="p-2 rounded-lg text-dark-400 hover:text-dark-100 hover:bg-dark-700/50 transition-smooth"
+                  title="Copy code"
+                >
+                  <FiCopy className="h-5 w-5" />
+                </button>
+                {isOwner && (
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-400/10 transition-smooth"
+                    title="Delete snippet"
+                  >
+                    <FiTrash2 className="h-5 w-5" />
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              {user && (
-                <button
-                  onClick={handleToggleFavorite}
-                  className={`p-2 rounded-lg transition-smooth ${
-                    isFavorite
-                      ? 'text-red-400 hover:text-red-300 hover:bg-red-400/10'
-                      : 'text-dark-400 hover:text-dark-100 hover:bg-dark-700/50'
-                  }`}
-                  title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                >
-                  <FiHeart className={`h-5 w-5 ${isFavorite ? 'fill-current' : ''}`} />
-                </button>
-              )}
-              <button
-                onClick={handleShare}
-                className="p-2 rounded-lg text-dark-400 hover:text-dark-100 hover:bg-dark-700/50 transition-smooth"
-                title="Share snippet"
-              >
-                <FiShare2 className="h-5 w-5" />
-              </button>
-              <button
-                onClick={handleCopyCode}
-                className="p-2 rounded-lg text-dark-400 hover:text-dark-100 hover:bg-dark-700/50 transition-smooth"
-                title="Copy code"
-              >
-                <FiCopy className="h-5 w-5" />
-              </button>
-              {isOwner && (
-                <button
-                  onClick={handleDelete}
-                  className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-400/10 transition-smooth"
-                  title="Delete snippet"
-                >
-                  <FiTrash2 className="h-5 w-5" />
-                </button>
-              )}
+            <div className="relative">
+              <CodeBlock
+                code={snippet.code}
+                language={snippet.language}
+                showLineNumbers
+              />
             </div>
           </div>
-
-          <div className="relative">
-            <CodeBlock
-              code={snippet.code}
-              language={snippet.language}
-              showLineNumbers
-            />
-          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Snippet"
+        message="Are you sure you want to delete this snippet? This action cannot be undone."
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
+    </>
   );
 } 

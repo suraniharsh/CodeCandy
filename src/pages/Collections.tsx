@@ -6,6 +6,7 @@ import { Modal } from '../components/Modal';
 import { CreateCollectionForm } from '../components/CreateCollectionForm';
 import { CreateSnippetForm } from '../components/CreateSnippetForm';
 import { SnippetCard } from '../components/SnippetCard';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
 
@@ -15,6 +16,8 @@ function Collections() {
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [showSnippetModal, setShowSnippetModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
   const [shareCollection, setShareCollection] = useState<Collection | null>(null);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [snippets, setSnippets] = useState<Snippet[]>([]);
@@ -165,19 +168,28 @@ function Collections() {
     }
   };
 
-  const handleDeleteCollection = async (collectionId: string, event: React.MouseEvent) => {
+  const handleDeleteCollection = async (collection: Collection, event: React.MouseEvent) => {
     event.stopPropagation();
-    if (!window.confirm('Are you sure you want to delete this collection? All snippets in this collection will also be deleted.')) return;
+    setCollectionToDelete(collection);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteCollection = async () => {
+    if (!collectionToDelete) return;
     
     try {
-      await snippetService.deleteCollection(collectionId);
-      if (selectedCollection?.id === collectionId) {
+      await snippetService.deleteCollection(collectionToDelete.id);
+      if (selectedCollection?.id === collectionToDelete.id) {
         setSelectedCollection(null);
       }
       loadCollections();
+      toast.success('Collection deleted successfully');
     } catch (error) {
       console.error('Error deleting collection:', error);
-      alert('Failed to delete collection. Please try again.');
+      toast.error('Failed to delete collection');
+    } finally {
+      setShowDeleteConfirm(false);
+      setCollectionToDelete(null);
     }
   };
 
@@ -278,7 +290,7 @@ function Collections() {
                         <FiShare2 className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={(e) => handleDeleteCollection(collection.id, e)}
+                        onClick={(e) => handleDeleteCollection(collection, e)}
                         className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-smooth p-1 hover:bg-dark-600 rounded"
                       >
                         <FiTrash2 className="h-4 w-4" />
@@ -442,6 +454,18 @@ function Collections() {
           </div>
         </div>
       </Modal>
+
+      {/* Add ConfirmDialog for collection deletion */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Collection"
+        message={`Are you sure you want to delete "${collectionToDelete?.name}"? All snippets in this collection will also be deleted. This action cannot be undone.`}
+        onConfirm={confirmDeleteCollection}
+        onCancel={() => {
+          setShowDeleteConfirm(false);
+          setCollectionToDelete(null);
+        }}
+      />
     </div>
   );
 }
