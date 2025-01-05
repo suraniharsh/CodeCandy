@@ -42,7 +42,7 @@ export function Home() {
       />
       <AnimatedPage className="p-4 sm:p-6">
         <motion.div variants={itemVariants} className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-wrap gap-5 items-center justify-between mb-4">
             <div>
               <motion.h1 variants={itemVariants} className="text-3xl font-bold text-dark-100 mb-2">
                 Welcome to CodeCandy
@@ -64,7 +64,7 @@ export function Home() {
         </motion.div>
 
         <motion.div variants={containerVariants}>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-wrap-reverse gap-3 items-center justify-between mb-4">
             <motion.h2 variants={itemVariants} className="text-xl font-semibold text-dark-200">
               Recent Snippets
             </motion.h2>
