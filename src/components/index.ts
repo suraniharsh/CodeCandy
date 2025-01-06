@@ -8,3 +8,4 @@ export { CodeBlock } from './CodeBlock';
 export { SnippetCard } from './SnippetCard';
 export { ErrorFallback } from './ErrorFallback';
 export { AnimatedPage } from './AnimatedPage';
+export { CodePreview } from './CodePreview';

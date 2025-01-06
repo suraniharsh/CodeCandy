@@ -3,9 +3,18 @@ import { Link } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { snippetService, type Snippet } from '../services/snippetService';
-import { SnippetCard } from '../components';
+import { SnippetCard, CodePreview } from '../components';
 import { AnimatedPage, containerVariants, itemVariants } from '../components/AnimatedPage';
 import { SEO } from '../components/SEO';
+
+const SAMPLE_CODE = `// Welcome to CodeCandy! 🍬
+function fibonacci(n: number): number {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// Try editing this code!
+console.log(fibonacci(10));`;
 
 export function Home() {
   const [recentSnippets, setRecentSnippets] = useState<Snippet[]>([]);
@@ -25,14 +34,6 @@ export function Home() {
 
     loadSnippets();
   }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-dark-300">Loading snippets...</div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -63,6 +64,12 @@ export function Home() {
           </div>
         </motion.div>
 
+        {/* Code Preview Section */}
+        <motion.div variants={itemVariants} className="mb-12">
+          <CodePreview initialCode={SAMPLE_CODE} language="typescript" />
+        </motion.div>
+
+        {/* Recent Snippets Section */}
         <motion.div variants={containerVariants}>
           <div className="flex items-center justify-between mb-4">
             <motion.h2 variants={itemVariants} className="text-xl font-semibold text-dark-200">
@@ -80,7 +87,11 @@ export function Home() {
             )}
           </div>
 
-          {recentSnippets.length === 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-dark-300">Loading snippets...</div>
+            </div>
+          ) : recentSnippets.length === 0 ? (
             <motion.div
               variants={itemVariants}
               className="bg-dark-800 rounded-lg border border-dark-700 p-8 text-center"
