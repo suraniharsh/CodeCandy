@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiClock, FiTag, FiHeart, FiShare2, FiCopy, FiTrash2 } from 'react-icons/fi';
+import { FiClock, FiTag, FiHeart, FiShare2, FiTrash2 } from 'react-icons/fi';
 import { snippetService, type Snippet } from '../services/snippetService';
 import { useAuth } from '../contexts/AuthContext';
-import { CodeBlock } from '../components';
+import { CodePreview } from '../components';
 import { toast } from 'react-hot-toast';
 
 export default function SnippetView() {
@@ -65,17 +65,6 @@ export default function SnippetView() {
     }
   };
 
-  const handleCopyCode = async () => {
-    if (!snippet) return;
-    try {
-      await navigator.clipboard.writeText(snippet.code);
-      toast.success('Code copied to clipboard');
-    } catch (error) {
-      console.error('Error copying code:', error);
-      toast.error('Failed to copy code');
-    }
-  };
-
   const handleShare = async () => {
     if (!snippet) return;
     try {
@@ -102,6 +91,25 @@ export default function SnippetView() {
     }
   };
 
+  const handleSaveCode = async (newCode: string) => {
+    if (!snippet) return;
+    
+    try {
+      // For both local and authenticated users
+      await snippetService.updateSnippet({
+        ...snippet,
+        code: newCode
+      });
+      toast.success('Snippet saved successfully');
+      
+      // Update local snippet state
+      setSnippet(prev => prev ? { ...prev, code: newCode } : null);
+    } catch (error) {
+      console.error('Error saving snippet:', error);
+      toast.error('Failed to save snippet');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -114,7 +122,8 @@ export default function SnippetView() {
     return null;
   }
 
-  const isOwner = user?.uid === snippet.userId;
+  // Allow editing for local snippets by anyone, but database snippets only by their owners
+  const isOwner = snippet.id.startsWith('local_') || (user && user.uid === snippet.userId);
 
   return (
     <motion.div
@@ -172,13 +181,6 @@ export default function SnippetView() {
               >
                 <FiShare2 className="h-5 w-5" />
               </button>
-              <button
-                onClick={handleCopyCode}
-                className="p-2 rounded-lg text-dark-400 hover:text-dark-100 hover:bg-dark-700/50 transition-smooth"
-                title="Copy code"
-              >
-                <FiCopy className="h-5 w-5" />
-              </button>
               {isOwner && (
                 <button
                   onClick={handleDelete}
@@ -192,10 +194,11 @@ export default function SnippetView() {
           </div>
 
           <div className="relative">
-            <CodeBlock
-              code={snippet.code}
+            <CodePreview
+              initialCode={snippet.code}
               language={snippet.language}
-              showLineNumbers
+              onSave={isOwner ? handleSaveCode : undefined}
+              readOnly={!isOwner}
             />
           </div>
         </div>

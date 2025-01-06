@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 interface CodePreviewProps {
   initialCode?: string;
   language?: string;
+  onSave?: (newCode: string) => void;
+  readOnly?: boolean;
 }
 
 interface ExportSettings {
@@ -15,11 +17,17 @@ interface ExportSettings {
   showBackground: boolean;
 }
 
-export function CodePreview({ initialCode = '', language = 'typescript' }: CodePreviewProps) {
+export function CodePreview({ 
+  initialCode = '', 
+  language = 'typescript', 
+  onSave,
+  readOnly = false 
+}: CodePreviewProps) {
   const [code, setCode] = useState(initialCode);
   const [theme, setTheme] = useState('vs-dark');
   const [editorHeight, setEditorHeight] = useState('auto');
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const [exportSettings, setExportSettings] = useState<ExportSettings>({
     format: 'png',
     scale: 2,
@@ -28,9 +36,28 @@ export function CodePreview({ initialCode = '', language = 'typescript' }: CodeP
   const exportRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
 
+  // Reset hasChanges when initialCode changes
+  useEffect(() => {
+    setCode(initialCode);
+    setHasChanges(false);
+  }, [initialCode]);
+
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
     updateEditorHeight();
+  };
+
+  const handleCodeChange = (value: string | undefined) => {
+    const newCode = value || '';
+    setCode(newCode);
+    setHasChanges(newCode !== initialCode);
+  };
+
+  const handleSave = () => {
+    if (onSave && hasChanges) {
+      onSave(code);
+      setHasChanges(false);
+    }
   };
 
   const updateEditorHeight = () => {
@@ -105,6 +132,17 @@ export function CodePreview({ initialCode = '', language = 'typescript' }: CodeP
           </div>
           
           <div className="flex items-center space-x-3">
+            {onSave && hasChanges && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSave}
+                className="px-3 py-1.5 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 text-sm flex items-center"
+              >
+                Save Changes
+              </motion.button>
+            )}
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -208,9 +246,7 @@ export function CodePreview({ initialCode = '', language = 'typescript' }: CodeP
             defaultLanguage={language}
             value={code}
             theme={theme}
-            onChange={(value: string | undefined) => {
-              setCode(value || '');
-            }}
+            onChange={handleCodeChange}
             onMount={handleEditorDidMount}
             options={{
               fontSize: 14,
@@ -246,7 +282,8 @@ export function CodePreview({ initialCode = '', language = 'typescript' }: CodeP
               fixedOverflowWidgets: true,
               automaticLayout: true,
               formatOnPaste: true,
-              formatOnType: true
+              formatOnType: true,
+              readOnly: readOnly
             }}
           />
         </div>
