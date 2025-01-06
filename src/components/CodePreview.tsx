@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Editor } from '@monaco-editor/react';
 import html2canvas from 'html2canvas';
-import { FiDownload, FiCopy, FiShare2, FiImage, FiClipboard, FiTwitter, FiLinkedin, FiGithub } from 'react-icons/fi';
+import { FiDownload, FiCopy, FiShare2, FiImage, FiClipboard} from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
@@ -40,7 +40,6 @@ export function CodePreview({
   });
   const exportRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
-  const [showShareOptions, setShowShareOptions] = useState(false);
 
   // Reset hasChanges when initialCode changes
   useEffect(() => {
@@ -128,106 +127,6 @@ export function CodePreview({
     } catch (error) {
       console.error('Export error:', error);
       toast.error('Failed to export code');
-    }
-  };
-
-  const handleShare = async (platform: 'twitter' | 'linkedin' | 'github') => {
-    if (!exportRef.current) return;
-
-    try {
-      // Show loading toast
-      const loadingToast = toast.loading('Preparing to share...', {
-        style: {
-          background: '#1F2937',
-          color: '#F3F4F6',
-          border: '1px solid #374151',
-        },
-      });
-
-      // Generate image for sharing
-      const canvas = await html2canvas(exportRef.current, {
-        scale: 2,
-        backgroundColor: '#1E1E1E',
-        logging: false,
-        allowTaint: true,
-        useCORS: true,
-        width: exportRef.current.offsetWidth,
-        height: exportRef.current.offsetHeight
-      });
-      
-      // Add CodeCandy watermark
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.font = 'bold 14px Inter';
-        ctx.fillStyle = '#6D28D9';
-        ctx.fillText('Made with CodeCandy 🍬', 10, canvas.height - 10);
-      }
-
-      // Convert canvas to blob
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => {
-          resolve(blob as Blob);
-        }, 'image/png', 1);
-      });
-
-      // Create file from blob
-      const file = new File([blob], 'code-snippet.png', { type: 'image/png' });
-      
-      // Clear loading toast
-      toast.dismiss(loadingToast);
-
-      const websiteUrl = 'https://codecandy.suraniharsh.codes';
-      
-      // Try native share if available
-      if (navigator.share) {
-        try {
-          const shareData: any = {
-            title: '🍬 CodeCandy Snippet',
-            text: `✨ Check out this awesome code snippet I created!\n\n🚀 Create your own beautiful code snippets at ${websiteUrl}\n\n#CodeCandy #coding #developer`,
-            files: [file]
-          };
-          await navigator.share(shareData);
-          return;
-        } catch (error) {
-          console.error('Native share failed:', error);
-          // Fall back to platform-specific sharing
-        }
-      }
-
-      // Platform-specific sharing as fallback
-      switch (platform) {
-        case 'twitter':
-          const tweetText = encodeURIComponent(`✨ Check out this awesome code snippet I created with CodeCandy!\n\n🚀 Create your own beautiful code snippets at ${websiteUrl}\n\n#CodeCandy #coding #developer`);
-          window.open(`https://twitter.com/intent/tweet?text=${tweetText}`, '_blank');
-          break;
-          
-        case 'linkedin':
-          const linkedinText = encodeURIComponent(`✨ I just created this beautiful code snippet using CodeCandy!\n\n🎯 CodeCandy is an amazing tool for developers to create and share beautiful code snippets.\n\n🚀 Try it out at ${websiteUrl}`);
-          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(websiteUrl)}&title=${encodeURIComponent('Beautiful Code Snippet Created with CodeCandy')}&summary=${linkedinText}`, '_blank');
-          break;
-          
-        case 'github':
-          const gistDescription = `✨ Beautiful code snippet created with CodeCandy 🍬`;
-          const gistContent = `${code}\n\n<!-- 🚀 Created with CodeCandy: ${websiteUrl} -->\n<!-- Make your code beautiful! -->`;
-          const gistUrl = `https://gist.github.com/?filename=code-snippet.${language}&value=${encodeURIComponent(gistContent)}&description=${encodeURIComponent(gistDescription)}`;
-          window.open(gistUrl, '_blank');
-          break;
-      }
-
-      // Show success toast
-      toast.success('Opening share dialog...', {
-        icon: '🔗',
-        style: {
-          background: '#1F2937',
-          color: '#F3F4F6',
-          border: '1px solid #374151',
-        },
-        duration: 3000
-      });
-    } catch (error) {
-      console.error('Share error:', error);
-      toast.dismiss();
-      toast.error(error instanceof Error ? error.message : 'Failed to share code');
     }
   };
 
