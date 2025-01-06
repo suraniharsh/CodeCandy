@@ -8,7 +8,9 @@ interface CodePreviewProps {
   initialCode?: string;
   language?: string;
   onSave?: (newCode: string) => void;
+  onChange?: (newCode: string) => void;
   readOnly?: boolean;
+  showSaveButton?: boolean;
 }
 
 interface ExportSettings {
@@ -21,7 +23,9 @@ export function CodePreview({
   initialCode = '', 
   language = 'typescript', 
   onSave,
-  readOnly = false 
+  onChange,
+  readOnly = false,
+  showSaveButton = true
 }: CodePreviewProps) {
   const [code, setCode] = useState(initialCode);
   const [theme, setTheme] = useState('vs-dark');
@@ -51,6 +55,9 @@ export function CodePreview({
     const newCode = value || '';
     setCode(newCode);
     setHasChanges(newCode !== initialCode);
+    if (onChange) {
+      onChange(newCode);
+    }
   };
 
   const handleSave = () => {
@@ -132,7 +139,7 @@ export function CodePreview({
           </div>
           
           <div className="flex items-center space-x-3">
-            {onSave && hasChanges && (
+            {showSaveButton && onSave && hasChanges && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
