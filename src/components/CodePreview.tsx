@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Editor } from '@monaco-editor/react';
 import html2canvas from 'html2canvas';
-import { FiDownload, FiCopy, FiTwitter, FiShare2, FiSettings } from 'react-icons/fi';
+import { FiDownload, FiCopy, FiTwitter, FiSettings } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 interface CodePreviewProps {
