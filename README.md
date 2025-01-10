@@ -1,111 +1,150 @@
-![](./public/logo.jpg)
 # CodeCandy 🍬
 
-&#x20;  &#x20;
+A modern web application for managing and sharing code snippets with syntax highlighting and organization features.
 
-## About CodeCandy
+## 🌟 Features
 
-CodeCandy is a modern web application designed for developers to manage and share code snippets efficiently. With its sleek, responsive UI, dark theme support, and offline capabilities, CodeCandy provides a seamless experience for organizing your code, regardless of where you are.
+- Create and manage code snippets with syntax highlighting
+- Organize snippets into collections
+- Share snippets with others
+- Modern and responsive UI
+- Dark mode support
+- SEO optimized
+- Firebase integration for data storage
 
-### Key Features:
+## 🛠️ Tech Stack
 
-- **Code Management**: Create, edit, delete, and organize snippets in collections.
-- **User Experience**: Dark theme, responsive design, and keyboard shortcuts.
-- **Data Handling**: Online/offline support, real-time updates, and secure data access.
-- **Authentication**: Google with protected routes.
-- **Performance**: Optimized animations, caching, and lazy loading for blazing-fast performance.
+- **Frontend Framework**: React 18 with TypeScript
+- **Styling**: TailwindCSS
+- **Routing**: React Router v7
+- **State Management**: React Context
+- **Backend/Database**: Firebase
+- **Build Tool**: Vite
+- **Code Highlighting**: React Syntax Highlighter & Prism.js
+- **UI Components**: Custom components with Framer Motion animations
+- **Fonts**: Inter & JetBrains Mono
+- **Icons**: React Icons
+- **Toast Notifications**: React Hot Toast
+- **SEO**: React Helmet Async
+- **Type Checking**: TypeScript
 
----
+## 📁 Project Structure
 
-## Setup Instructions ⚙️
+```
+src/
+├── assets/         # Static assets and images
+├── components/     # Reusable UI components
+├── config/         # Configuration files
+├── contexts/       # React context providers
+├── data/          # Static data and constants
+├── hooks/         # Custom React hooks
+├── lib/           # Third-party library configurations
+├── pages/         # Page components
+├── services/      # API and service integrations
+├── types/         # TypeScript type definitions
+└── utils/         # Utility functions
+```
 
-Follow these steps to get CodeCandy running on your local machine:
+## 🚀 Getting Started
 
-### Prerequisites:
+### Prerequisites
 
-- Node.js (v18 or later)
+- Node.js (v16 or higher)
 - npm or yarn
-- Firebase project configuration
+- Firebase account
 
-### Steps:
+### Installation
 
-1. **Clone the Repository:**
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/codecandy.git
+cd codecandy
+```
 
-   ```bash
-   git clone https://github.com/your-username/codecandy.git
-   cd codecandy
-   ```
+2. Install dependencies:
+```bash
+yarn install
+# or
+npm install
+```
 
-2. **Install Dependencies:**
+3. Create a `.env` file in the root directory and add your Firebase configuration:
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
 
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+4. Start the development server:
+```bash
+yarn dev
+# or
+npm run dev
+```
 
-3. **Setup Firebase Configuration:**
+## 📝 Available Scripts
 
-   - Create a `.env` file in the root directory.
-   - Add your Firebase configuration:
-     ```env
-     VITE_FIREBASE_API_KEY=your-api-key
-     VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
-     VITE_FIREBASE_PROJECT_ID=your-project-id
-     VITE_FIREBASE_STORAGE_BUCKET=your-storage-bucket
-     VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
-     VITE_FIREBASE_APP_ID=your-app-id
-     ```
+- `yarn dev` - Start development server
+- `yarn build` - Build for production
+- `yarn lint` - Run ESLint
+- `yarn preview` - Preview production build locally
 
-4. **Start the Development Server:**
+## 📚 Key Components
 
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+- `CodeBlock`: Handles code syntax highlighting
+- `CreateSnippetForm`: Form for creating new code snippets
+- `Sidebar`: Navigation and collection management
+- `SEO`: Handles meta tags and SEO optimization
+- `SnippetView`: Displays individual snippets
 
-   Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+## 🔧 Configuration Files
 
----
+- `vite.config.ts` - Vite configuration
+- `tailwind.config.js` - TailwindCSS configuration
+- `tsconfig.json` - TypeScript configuration
+- `eslint.config.js` - ESLint configuration
+- `postcss.config.js` - PostCSS configuration
+- `firestore.rules` - Firebase security rules
 
-## Contribution Guidelines 🛠️
+## 🔐 Security
 
-We welcome contributions to CodeCandy! To contribute:
+- Firebase Authentication for user management
+- Secure Firestore rules
+- Environment variables for sensitive data
 
-1. **Fork the Repository:**
-   Click the "Fork" button on the top right of this repository.
+## 🌐 Deployment
 
-2. **Create a Branch:**
+The project is configured for deployment on Vercel with the following configuration:
 
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+```json
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
 
-3. **Commit Your Changes:**
-   Ensure your code follows the existing style and guidelines.
+## 📄 License
 
-   ```bash
-   git add .
-   git commit -m "Add your commit message"
-   ```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-4. **Push Your Branch:**
+## 🤝 Contributing
 
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+We love contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
 
-5. **Submit a Pull Request:**
-   Go to the repository on GitHub and open a pull request. Include a clear description of the changes made.
+- Development setup
+- Code style guidelines
+- Pull request process
+- Bug reporting
+- Code of conduct
 
----
+## 📧 Support
 
-## License 🔒
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Enjoy using CodeCandy and feel free to contribute to its growth! 🌟
+For support, please open an issue in the GitHub repository or contact the maintainers.
 
