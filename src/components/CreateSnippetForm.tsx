@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, useRef } from 'react';
 import { snippetService } from '../services/snippetService';
 import { toast } from 'react-hot-toast';
 import { FiLoader } from 'react-icons/fi';
@@ -23,6 +23,16 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
   const [selectedCollectionId, setSelectedCollectionId] = useState(initialCollectionId || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [titleError, setTitleError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
+
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  // Refs to focus or scroll to the error fields
+  const titleRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+
   useEffect(() => {
     const loadCollections = async () => {
       const allCollections = await snippetService.getAllCollections();
@@ -31,9 +41,40 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
     loadCollections();
   }, []);
 
+  useEffect(() => {
+    if (formSubmitted) {
+      if (titleError && titleRef.current) {
+        titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (descriptionError && descriptionRef.current) {
+        descriptionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      setFormSubmitted(false); // Reset submission flag
+    }
+  }, [formSubmitted, titleError, descriptionError]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (isSubmitting) return;
+    let hasError = false;
+
+    if (!title.trim()){
+      setTitleError('Title is required.');
+      hasError = true;
+    } else {
+      setTitleError('');
+    }
+    if (!description.trim()){
+      setDescriptionError('Description is required.');
+      hasError = true;
+    } else {
+      setDescriptionError('');
+    }
+
+    if (hasError) {
+      setFormSubmitted(true);
+      return;
+    }
+
+    if (!title.trim() || !description.trim() || isSubmitting) return;
 
     try {
       setIsSubmitting(true);
@@ -59,6 +100,16 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
     }
   };
 
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+    if (titleError) setTitleError(''); // Clear error when user starts typing
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+    if (descriptionError) setDescriptionError(''); // Clear error when user starts typing
+  };
+
   const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTagInput(e.target.value.replace(/\s/g, ''));
   };
@@ -80,7 +131,7 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-dark-200 mb-1">
           Title
@@ -89,11 +140,13 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
           type="text"
           id="title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-smooth"
+          ref={titleRef}
+          onChange={handleTitleChange}
+          className={`w-full px-3 py-2 bg-dark-700 border ${titleError ? 'border-red-500' : 'border-dark-600'} rounded-md text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 ${titleError ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-primary-500 focus:border-primary-500'} transition-smooth`}
           placeholder="Enter snippet title"
           required
         />
+        {titleError && <p className="text-red-500 text-sm mt-1">{titleError}</p>}
       </div>
 
       <div>
@@ -103,12 +156,14 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
         <textarea
           id="description"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-smooth"
+          ref={descriptionRef}
+          onChange={handleDescriptionChange}
+          className={`w-full px-3 py-2 bg-dark-700 border ${descriptionError ? 'border-red-500' : 'border-dark-600'} rounded-md text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 ${descriptionError ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-primary-500 focus:border-primary-500'} transition-smooth`}
           placeholder="Describe your snippet"
           rows={3}
           required
         />
+        {descriptionError && <p className="text-red-500 text-sm mt-1">{descriptionError}</p>}
       </div>
 
       <div>
