@@ -12,15 +12,10 @@ export function CreateCollectionForm({ onSuccess, onCancel }: CreateCollectionFo
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [nameError, setNameError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()){
-      setNameError("Collection name is required.");
-      return;
-    } 
-    if (isSubmitting) return;
+    if (!name.trim() || isSubmitting) return;
 
     try {
       setIsSubmitting(true);
@@ -39,14 +34,8 @@ export function CreateCollectionForm({ onSuccess, onCancel }: CreateCollectionFo
     }
   };
 
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-    if (nameError) setNameError(''); // Clear error when user starts typing
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-dark-200 mb-1">
           Collection Name
@@ -55,17 +44,12 @@ export function CreateCollectionForm({ onSuccess, onCancel }: CreateCollectionFo
           type="text"
           id="name"
           value={name}
-          onChange={handleNameChange}
-          className={`w-full px-3 py-2 bg-dark-700 border ${
-            nameError ? 'border-red-500' : 'border-dark-600'
-          } rounded-md text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 ${
-            nameError ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-primary-500 focus:border-primary-500'
-          } transition-smooth`}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-smooth"
           placeholder="e.g., React Hooks"
           required
           disabled={isSubmitting}
         />
-        {nameError && <p className="text-red-500 text-sm mt-1">{nameError}</p>}
       </div>
 
       <div>

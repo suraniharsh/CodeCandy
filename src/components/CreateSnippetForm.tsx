@@ -32,7 +32,7 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
-
+  
   useEffect(() => {
     const loadCollections = async () => {
       const allCollections = await snippetService.getAllCollections();
