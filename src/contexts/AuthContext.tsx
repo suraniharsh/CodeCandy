@@ -1,8 +1,12 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { 
-  signInWithPopup, 
+import {
+  signInWithPopup,
   GithubAuthProvider,
-  onAuthStateChanged, 
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  sendEmailVerification,
   type User
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -13,6 +17,9 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithGithub: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -67,6 +74,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const signInWithEmail = async (email: string, password: string) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const userProfile = await authService.createUserProfile(result.user);
+      setUser(userProfile);
+    } catch (error) {
+      console.error('Email sign-in error:', error);
+      throw error;
+    }
+  };
+
+  const signUpWithEmail = async (email: string, password: string): Promise<void> => {
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+
+      await sendEmailVerification(user);
+      console.log("Verification email sent to:", user.email);
+
+      await authService.createUserProfile(user);
+      await auth.signOut();
+
+    } catch (error) {
+      console.error("Email sign-up error:", error);
+      throw error;
+    }
+  };
+
+
+
+  const resetPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log("Password reset email sent");
+    } catch (error) {
+      console.error("Password reset error:", error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     try {
       await authService.signOut();
@@ -82,6 +128,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     signInWithGoogle,
     signInWithGithub,
+    signInWithEmail,
+    signUpWithEmail,
+    resetPassword,
     signOut,
   };
 
