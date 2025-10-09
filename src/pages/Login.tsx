@@ -5,9 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ErrorFallback } from '../components/ErrorFallback';
 import { toast } from 'react-hot-toast';
+import EmailLoginForm from '../components/Auth/EmailLoginForm';
+import EmailRegisterForm from '../components/Auth/EmailRegisterForm';
 
 function Login() {
   const { signInWithGoogle, signInWithGithub } = useAuth();
+  const [view, setView] = useState<'social' | 'email-login' | 'email-register'>('social');
   const navigate = useNavigate();
   const [error, setError] = useState<Error | null>(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -56,11 +59,29 @@ function Login() {
     }
   };
 
+  if (view === 'email-login') {
+    return (
+      <EmailLoginForm
+        onSwitchToRegister={() => setView('email-register')}
+        onBack={() => setView('social')}
+      />
+    );
+  }
+
+  if (view === 'email-register') {
+    return (
+      <EmailRegisterForm
+        onSwitchToLogin={() => setView('email-login')}
+        onBack={() => setView('social')}
+      />
+    );
+  }
+
   if (error) {
     return (
-      <ErrorFallback 
-        error={error} 
-        resetErrorBoundary={() => setError(null)} 
+      <ErrorFallback
+        error={error}
+        resetErrorBoundary={() => setError(null)}
       />
     );
   }
@@ -93,11 +114,10 @@ function Login() {
           </button>
 
           <button
-            disabled
-            className="w-full flex items-center justify-center space-x-2 p-3 border border-dark-600 rounded-lg text-dark-400 cursor-not-allowed opacity-50"
+            onClick={() => setView('email-login')}
+            className="w-full p-3 bg-dark-700 text-white rounded-lg hover:bg-dark-600"
           >
-            <FiMail className="w-5 h-5" />
-            <span>Continue with Email (Coming Soon)</span>
+            Continue with Email
           </button>
         </div>
 
