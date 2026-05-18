@@ -1,7 +1,6 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
 import { Readable } from 'stream';
-import { db } from '../config/firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { supabase } from '../config/supabase';
 import { siteConfig } from '../config/meta';
 
 interface SitemapUrl {
@@ -32,32 +31,32 @@ export async function generateSitemap(): Promise<string> {
     })));
 
     // Add public collections
-    const collectionsRef = collection(db, 'collections');
-    const publicCollectionsQuery = query(collectionsRef, where('isPublic', '==', true));
-    const collectionsSnapshot = await getDocs(publicCollectionsQuery);
-    
-    collectionsSnapshot.forEach(doc => {
-      const data = doc.data();
+    const { data: collections } = await supabase
+      .from('collections')
+      .select('id, updated_at, created_at')
+      .eq('is_public', true);
+
+    (collections ?? []).forEach(row => {
       urls.push({
-        url: `${siteConfig.baseUrl}/collections/${doc.id}`,
+        url: `${siteConfig.baseUrl}/collections/${row.id}`,
         changefreq: 'weekly',
         priority: 0.8,
-        lastmod: new Date(data.updatedAt || data.createdAt).toISOString()
+        lastmod: new Date(row.updated_at || row.created_at).toISOString(),
       });
     });
 
     // Add public snippets
-    const snippetsRef = collection(db, 'snippets');
-    const publicSnippetsQuery = query(snippetsRef, where('isPublic', '==', true));
-    const snippetsSnapshot = await getDocs(publicSnippetsQuery);
+    const { data: snippets } = await supabase
+      .from('snippets')
+      .select('id, updated_at, created_at')
+      .eq('is_public', true);
 
-    snippetsSnapshot.forEach(doc => {
-      const data = doc.data();
+    (snippets ?? []).forEach(row => {
       urls.push({
-        url: `${siteConfig.baseUrl}/snippet/${doc.id}`,
+        url: `${siteConfig.baseUrl}/snippet/${row.id}`,
         changefreq: 'weekly',
         priority: 0.7,
-        lastmod: new Date(data.updatedAt || data.createdAt).toISOString()
+        lastmod: new Date(row.updated_at || row.created_at).toISOString(),
       });
     });
 

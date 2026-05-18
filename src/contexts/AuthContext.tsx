@@ -1,11 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { 
-  signInWithPopup, 
-  GithubAuthProvider,
-  onAuthStateChanged, 
-  type User
-} from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { supabase } from '../config/supabase';
 import { authService, type UserProfile } from '../services/authService';
 
 interface AuthContextType {
@@ -23,66 +17,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
-      try {
-        if (firebaseUser) {
-          const userProfile = await authService.createUserProfile(firebaseUser);
-          setUser(userProfile);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Error handling auth state change:', error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session ? authService.sessionToProfile(session) : null);
+      setLoading(false);
     });
 
-    return unsubscribe;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session ? authService.sessionToProfile(session) : null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
-    try {
-      const userProfile = await authService.signInWithGoogle();
-      if (!userProfile) {
-        throw new Error('Failed to get user profile');
-      }
-      setUser(userProfile);
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-      throw error;
-    }
-  };
-
-  const signInWithGithub = async () => {
-    const provider = new GithubAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const userProfile = await authService.createUserProfile(result.user);
-      setUser(userProfile);
-    } catch (error) {
-      console.error('GitHub sign-in error:', error);
-      throw error;
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      await authService.signOut();
-      setUser(null);
-    } catch (error) {
-      console.error('Sign out error:', error);
-      throw error;
-    }
-  };
-
-  const value = {
+  const value: AuthContextType = {
     user,
     loading,
-    signInWithGoogle,
-    signInWithGithub,
-    signOut,
+    signInWithGoogle: () => authService.signInWithGoogle(),
+    signInWithGithub: () => authService.signInWithGithub(),
+    signOut: async () => {
+      await authService.signOut();
+      setUser(null);
+    },
   };
 
   return (

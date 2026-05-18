@@ -22,7 +22,7 @@ export function CreateCollectionForm({ onSuccess, onCancel }: CreateCollectionFo
       await snippetService.createCollection({
         name: name.trim(),
         description: description.trim(),
-        snippetIds: [],
+        isPublic: false,
       });
       toast.success('Collection created successfully');
       onSuccess();

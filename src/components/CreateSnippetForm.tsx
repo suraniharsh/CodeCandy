@@ -86,7 +86,8 @@ export function CreateSnippetForm({ onSuccess, onCancel, collectionId: initialCo
         language,
         tags,
         collectionId: selectedCollectionId || undefined,
-        isFavorite: false
+        isFavorite: false,
+        isPublic: false,
       };
 
       await snippetService.createSnippet(snippetData);

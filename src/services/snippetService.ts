@@ -1,5 +1,4 @@
-import { db, auth } from '../config/firebase';
-import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, setDoc } from 'firebase/firestore';
+import { supabase } from '../config/supabase';
 
 export interface Snippet {
   id: string;
@@ -12,26 +11,74 @@ export interface Snippet {
   collectionId?: string;
   userId?: string;
   isFavorite: boolean;
+  isPublic: boolean;
+  favoritesCount: number;
 }
 
 export interface Collection {
   id: string;
   name: string;
   description: string;
-  snippetIds: string[];
   createdAt: number;
   userId?: string;
-  isPublic?: boolean;
+  isPublic: boolean;
+}
+
+type SnippetRow = {
+  id: string;
+  title: string;
+  description: string;
+  code: string;
+  language: string;
+  tags: string[];
+  created_at: string;
+  collection_id: string | null;
+  user_id: string | null;
+  is_public: boolean;
+  favorites_count: number;
+};
+
+type CollectionRow = {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  user_id: string | null;
+  is_public: boolean;
+};
+
+function rowToSnippet(row: SnippetRow, isFavorite = false): Snippet {
+  return {
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    code: row.code,
+    language: row.language,
+    tags: row.tags,
+    createdAt: new Date(row.created_at).getTime(),
+    collectionId: row.collection_id ?? undefined,
+    userId: row.user_id ?? undefined,
+    isFavorite,
+    isPublic: row.is_public,
+    favoritesCount: row.favorites_count,
+  };
+}
+
+function rowToCollection(row: CollectionRow): Collection {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    createdAt: new Date(row.created_at).getTime(),
+    userId: row.user_id ?? undefined,
+    isPublic: row.is_public,
+  };
 }
 
 class SnippetService {
-  private snippetsCollection = collection(db, 'snippets');
-  private collectionsCollection = collection(db, 'collections');
-  private favoritesCollection = collection(db, 'favorites');
-
   private getLocalCollections(): Collection[] {
-    const collections = localStorage.getItem('collections');
-    return collections ? JSON.parse(collections) : [];
+    const data = localStorage.getItem('collections');
+    return data ? JSON.parse(data) : [];
   }
 
   private setLocalCollections(collections: Collection[]) {
@@ -39,38 +86,47 @@ class SnippetService {
   }
 
   private getLocalSnippets(): Snippet[] {
-    const snippets = localStorage.getItem('snippets');
-    return snippets ? JSON.parse(snippets) : [];
+    const data = localStorage.getItem('snippets');
+    return data ? JSON.parse(data) : [];
   }
 
   private setLocalSnippets(snippets: Snippet[]) {
     localStorage.setItem('snippets', JSON.stringify(snippets));
   }
 
-  async createSnippet(data: Omit<Snippet, 'id' | 'createdAt'>): Promise<Snippet> {
-    const newSnippet = {
-      ...data,
-      createdAt: Date.now(),
-      collectionId: data.collectionId || undefined
-    };
+  private async currentUserId(): Promise<string | null> {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user.id ?? null;
+  }
 
-    if (auth.currentUser) {
-      console.log('Creating snippet with data:', newSnippet);
-      const docRef = await addDoc(this.snippetsCollection, {
-        ...newSnippet,
-        userId: auth.currentUser.uid
-      });
-      const createdSnippet = {
-        ...newSnippet,
-        id: docRef.id,
-        userId: auth.currentUser.uid
-      } as Snippet;
-      console.log('Created snippet:', createdSnippet);
-      return createdSnippet;
+  async createSnippet(data: Omit<Snippet, 'id' | 'createdAt' | 'favoritesCount'>): Promise<Snippet> {
+    const uid = await this.currentUserId();
+
+    if (uid) {
+      const { data: row, error } = await supabase
+        .from('snippets')
+        .insert({
+          user_id: uid,
+          collection_id: data.collectionId ?? null,
+          title: data.title,
+          description: data.description,
+          code: data.code,
+          language: data.language,
+          tags: data.tags,
+          is_public: data.isPublic ?? false,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return rowToSnippet(row as SnippetRow);
     } else {
       const snippets = this.getLocalSnippets();
-      const id = `local_${Date.now()}`;
-      const snippet = { ...newSnippet, id } as Snippet;
+      const snippet: Snippet = {
+        ...data,
+        id: `local_${Date.now()}`,
+        createdAt: Date.now(),
+        favoritesCount: 0,
+      };
       snippets.push(snippet);
       this.setLocalSnippets(snippets);
       return snippet;
@@ -78,340 +134,271 @@ class SnippetService {
   }
 
   async createCollection(data: Omit<Collection, 'id' | 'createdAt'>): Promise<Collection> {
-    const newCollection = {
-      ...data,
-      createdAt: Date.now(),
-    };
+    const uid = await this.currentUserId();
 
-    if (auth.currentUser) {
-      const docRef = await addDoc(this.collectionsCollection, {
-        ...newCollection,
-        userId: auth.currentUser.uid
-      });
-      return {
-        ...newCollection,
-        id: docRef.id
-      } as Collection;
+    if (uid) {
+      const { data: row, error } = await supabase
+        .from('collections')
+        .insert({
+          user_id: uid,
+          name: data.name,
+          description: data.description,
+          is_public: data.isPublic ?? false,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return rowToCollection(row as CollectionRow);
     } else {
       const collections = this.getLocalCollections();
-      const id = `local_${Date.now()}`;
-      const collection = { ...newCollection, id } as Collection;
-      collections.push(collection);
+      const col: Collection = { ...data, id: `local_${Date.now()}`, createdAt: Date.now() };
+      collections.push(col);
       this.setLocalCollections(collections);
-      return collection;
+      return col;
     }
   }
 
   async getAllCollections(): Promise<Collection[]> {
-    if (auth.currentUser) {
-      try {
-        const q = query(this.collectionsCollection, where('userId', '==', auth.currentUser.uid));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Collection));
-      } catch (error) {
-        console.error('Error getting collections:', error);
-        return [];
-      }
-    } else {
-      return this.getLocalCollections();
-    }
+    const uid = await this.currentUserId();
+    if (!uid) return this.getLocalCollections();
+
+    const { data, error } = await supabase
+      .from('collections')
+      .select('*')
+      .eq('user_id', uid)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data as CollectionRow[]).map(rowToCollection);
   }
 
   async getAllSnippets(): Promise<Snippet[]> {
-    if (auth.currentUser) {
-      try {
-        const q = query(this.snippetsCollection, where('userId', '==', auth.currentUser.uid));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Snippet));
-      } catch (error) {
-        console.error('Error getting snippets:', error);
-        return [];
-      }
-    } else {
-      return this.getLocalSnippets();
-    }
+    const uid = await this.currentUserId();
+    if (!uid) return this.getLocalSnippets();
+
+    const [snippetsRes, favoritesRes] = await Promise.all([
+      supabase.from('snippets').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+      supabase.from('favorites').select('snippet_id').eq('user_id', uid),
+    ]);
+    if (snippetsRes.error) throw snippetsRes.error;
+    const favoriteIds = new Set((favoritesRes.data ?? []).map((f: { snippet_id: string }) => f.snippet_id));
+    return (snippetsRes.data as SnippetRow[]).map(row => rowToSnippet(row, favoriteIds.has(row.id)));
   }
 
   async getSnippetById(id: string): Promise<Snippet | null> {
-    try {
-      // First try to get from local storage for non-authenticated users
-      if (!auth.currentUser) {
-        const snippets = this.getLocalSnippets();
-        const localSnippet = snippets.find(s => s.id === id);
-        if (localSnippet) return localSnippet;
-      }
+    const uid = await this.currentUserId();
 
-      // If not found in local storage or user is authenticated, try Firestore
-      const docRef = doc(this.snippetsCollection, id);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as Snippet;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error getting snippet:', error);
-      return null;
+    if (!uid) {
+      const local = this.getLocalSnippets().find(s => s.id === id);
+      if (local) return local;
     }
+
+    const { data, error } = await supabase.from('snippets').select('*').eq('id', id).single();
+    if (error || !data) return null;
+
+    let isFav = false;
+    if (uid) {
+      const { data: fav } = await supabase
+        .from('favorites')
+        .select('snippet_id')
+        .eq('user_id', uid)
+        .eq('snippet_id', id)
+        .maybeSingle();
+      isFav = !!fav;
+    }
+    return rowToSnippet(data as SnippetRow, isFav);
   }
 
   async getCollectionById(id: string): Promise<Collection | null> {
-    try {
-      // Always try Firestore first
-      const docRef = doc(this.collectionsCollection, id);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-        const collection = { id: docSnap.id, ...docSnap.data() } as Collection;
-        console.log('Found collection in Firestore:', collection);
-        
-        // If collection is public, return it
-        if (collection.isPublic) {
-          return collection;
-        }
-        
-        // If user is authenticated and owns the collection, return it
-        if (auth.currentUser && collection.userId === auth.currentUser.uid) {
-          return collection;
-        }
-      } else {
-        console.log('Collection document does not exist in Firestore');
-        
-        // If not found in Firestore, try local storage
-        const collections = this.getLocalCollections();
-        const localCollection = collections.find(c => c.id === id);
-        console.log('Found collection in local storage:', localCollection);
-        
-        if (localCollection?.isPublic) {
-          return localCollection;
-        }
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error getting collection:', error);
-      return null;
+    const uid = await this.currentUserId();
+
+    if (!uid) {
+      const local = this.getLocalCollections().find(c => c.id === id);
+      return local?.isPublic ? local : null;
     }
+
+    const { data, error } = await supabase.from('collections').select('*').eq('id', id).single();
+    if (error || !data) return null;
+    const col = rowToCollection(data as CollectionRow);
+    if (col.isPublic || col.userId === uid) return col;
+    return null;
   }
 
   async updateCollection(collection: Collection): Promise<void> {
-    if (auth.currentUser) {
-      const docRef = doc(this.collectionsCollection, collection.id);
-      const { id, ...collectionData } = collection;
-      await updateDoc(docRef, collectionData);
-    } else {
-      const collections = this.getLocalCollections();
-      const index = collections.findIndex(c => c.id === collection.id);
-      if (index !== -1) {
-        collections[index] = collection;
-        this.setLocalCollections(collections);
-      }
+    const uid = await this.currentUserId();
+    if (!uid) {
+      const all = this.getLocalCollections();
+      const idx = all.findIndex(c => c.id === collection.id);
+      if (idx !== -1) { all[idx] = collection; this.setLocalCollections(all); }
+      return;
     }
+    const { error } = await supabase
+      .from('collections')
+      .update({ name: collection.name, description: collection.description, is_public: collection.isPublic })
+      .eq('id', collection.id);
+    if (error) throw error;
   }
 
   async deleteCollection(id: string): Promise<void> {
-    const snippets = await this.getSnippetsByCollectionId(id);
-    
-    if (auth.currentUser) {
-      // Delete all snippets in the collection
-      await Promise.all(snippets.map(snippet => 
-        deleteDoc(doc(this.snippetsCollection, snippet.id))
-      ));
-      // Delete the collection
-      await deleteDoc(doc(this.collectionsCollection, id));
-    } else {
-      // Delete all snippets in local storage
-      const allSnippets = this.getLocalSnippets();
-      this.setLocalSnippets(allSnippets.filter(s => s.collectionId !== id));
-      // Delete the collection
-      const collections = this.getLocalCollections();
-      this.setLocalCollections(collections.filter(c => c.id !== id));
+    const uid = await this.currentUserId();
+    if (!uid) {
+      this.setLocalSnippets(this.getLocalSnippets().filter(s => s.collectionId !== id));
+      this.setLocalCollections(this.getLocalCollections().filter(c => c.id !== id));
+      return;
     }
+    // snippets with on delete set null — delete collection only; snippets stay, unlinked
+    const { error } = await supabase.from('collections').delete().eq('id', id);
+    if (error) throw error;
   }
 
   async deleteSnippet(id: string): Promise<void> {
-    if (auth.currentUser) {
-      await deleteDoc(doc(this.snippetsCollection, id));
-    } else {
-      const snippets = this.getLocalSnippets();
-      this.setLocalSnippets(snippets.filter(s => s.id !== id));
+    const uid = await this.currentUserId();
+    if (!uid) {
+      this.setLocalSnippets(this.getLocalSnippets().filter(s => s.id !== id));
+      return;
     }
+    const { error } = await supabase.from('snippets').delete().eq('id', id);
+    if (error) throw error;
   }
 
   async getFavorites(): Promise<string[]> {
-    if (auth.currentUser) {
-      const docRef = doc(this.favoritesCollection, auth.currentUser.uid);
-      const docSnap = await getDoc(docRef);
-      return docSnap.exists() ? docSnap.data().snippetIds : [];
-    } else {
-      const favorites = localStorage.getItem('favorites');
-      return favorites ? JSON.parse(favorites) : [];
+    const uid = await this.currentUserId();
+    if (!uid) {
+      const data = localStorage.getItem('favorites');
+      return data ? JSON.parse(data) : [];
     }
+    const { data, error } = await supabase.from('favorites').select('snippet_id').eq('user_id', uid);
+    if (error) throw error;
+    return (data ?? []).map((f: { snippet_id: string }) => f.snippet_id);
   }
 
   async toggleFavorite(snippetId: string): Promise<boolean> {
-    const favorites = await this.getFavorites();
-    const isFavorite = favorites.includes(snippetId);
-    const updatedFavorites = isFavorite
-      ? favorites.filter(id => id !== snippetId)
-      : [...favorites, snippetId];
+    const uid = await this.currentUserId();
 
-    if (auth.currentUser) {
-      const docRef = doc(this.favoritesCollection, auth.currentUser.uid);
-      await setDoc(docRef, { snippetIds: updatedFavorites }, { merge: true });
+    if (!uid) {
+      const favs: string[] = JSON.parse(localStorage.getItem('favorites') ?? '[]');
+      const isFav = favs.includes(snippetId);
+      localStorage.setItem('favorites', JSON.stringify(
+        isFav ? favs.filter(id => id !== snippetId) : [...favs, snippetId]
+      ));
+      return !isFav;
+    }
+
+    const { data: existing } = await supabase
+      .from('favorites')
+      .select('snippet_id')
+      .eq('user_id', uid)
+      .eq('snippet_id', snippetId)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase.from('favorites').delete().eq('user_id', uid).eq('snippet_id', snippetId);
+      return false;
     } else {
-      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      await supabase.from('favorites').insert({ user_id: uid, snippet_id: snippetId });
+      return true;
     }
-    return !isFavorite;
-  }
-
-  async searchSnippets(query: string): Promise<Snippet[]> {
-    const snippets = await this.getAllSnippets();
-    const searchTerm = query.toLowerCase();
-    return snippets.filter(snippet =>
-      snippet.title.toLowerCase().includes(searchTerm) ||
-      snippet.description.toLowerCase().includes(searchTerm) ||
-      snippet.code.toLowerCase().includes(searchTerm) ||
-      snippet.tags.some(tag => tag.toLowerCase().includes(searchTerm))
-    );
-  }
-
-  async getSnippetsByCollectionId(collectionId: string): Promise<Snippet[]> {
-    try {
-      // Get the collection first to check if it's public
-      const collection = await this.getCollectionById(collectionId);
-      console.log('Checking collection access:', collection);
-      
-      if (!collection) {
-        console.log('Collection not found');
-        return [];
-      }
-
-      // For public collections or if user owns it
-      if (collection.isPublic || (auth.currentUser && collection.userId === auth.currentUser.uid)) {
-        // Create a query for snippets
-        const q = query(
-          this.snippetsCollection,
-          where('collectionId', '==', collectionId)
-        );
-
-        console.log('Fetching snippets for collection:', collectionId);
-        const querySnapshot = await getDocs(q);
-        const snippets = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-          console.log('Raw snippet data:', data);
-          return {
-            id: doc.id,
-            ...data,
-            collectionId: collectionId // Ensure collectionId is set
-          } as Snippet;
-        });
-        console.log('Found snippets:', snippets);
-        return snippets;
-      }
-
-      console.log('No access to collection snippets');
-      return [];
-    } catch (error) {
-      console.error('Error getting snippets:', error);
-      return [];
-    }
-  }
-
-  async getFavoriteSnippets(): Promise<Snippet[]> {
-    const favorites = await this.getFavorites();
-    const snippets = await Promise.all(
-      favorites.map(id => this.getSnippetById(id))
-    );
-    return snippets.filter((s): s is Snippet => s !== null);
   }
 
   async isFavorite(snippetId: string): Promise<boolean> {
-    const favorites = await this.getFavorites();
-    return favorites.includes(snippetId);
+    const uid = await this.currentUserId();
+    if (!uid) {
+      const favs: string[] = JSON.parse(localStorage.getItem('favorites') ?? '[]');
+      return favs.includes(snippetId);
+    }
+    const { data } = await supabase
+      .from('favorites')
+      .select('snippet_id')
+      .eq('user_id', uid)
+      .eq('snippet_id', snippetId)
+      .maybeSingle();
+    return !!data;
+  }
+
+  async searchSnippets(term: string): Promise<Snippet[]> {
+    const uid = await this.currentUserId();
+    if (!uid) {
+      const q = term.toLowerCase();
+      return this.getLocalSnippets().filter(s =>
+        s.title.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.code.toLowerCase().includes(q) ||
+        s.tags.some(t => t.toLowerCase().includes(q))
+      );
+    }
+    // Use Postgres full-text search via ilike for simplicity
+    const { data, error } = await supabase
+      .from('snippets')
+      .select('*')
+      .eq('user_id', uid)
+      .or(`title.ilike.%${term}%,description.ilike.%${term}%,code.ilike.%${term}%`);
+    if (error) throw error;
+    return (data as SnippetRow[]).map(row => rowToSnippet(row));
+  }
+
+  async getSnippetsByCollectionId(collectionId: string): Promise<Snippet[]> {
+    const col = await this.getCollectionById(collectionId);
+    if (!col) return [];
+
+    const uid = await this.currentUserId();
+    if (!uid) return this.getLocalSnippets().filter(s => s.collectionId === collectionId);
+
+    const { data, error } = await supabase
+      .from('snippets')
+      .select('*')
+      .eq('collection_id', collectionId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data as SnippetRow[]).map(row => rowToSnippet(row));
+  }
+
+  async getFavoriteSnippets(): Promise<Snippet[]> {
+    const uid = await this.currentUserId();
+    if (!uid) {
+      const favs: string[] = JSON.parse(localStorage.getItem('favorites') ?? '[]');
+      return this.getLocalSnippets().filter(s => favs.includes(s.id));
+    }
+    const { data, error } = await supabase
+      .from('snippets')
+      .select('*, favorites!inner(user_id)')
+      .eq('favorites.user_id', uid);
+    if (error) throw error;
+    return (data as SnippetRow[]).map(row => rowToSnippet(row, true));
   }
 
   async updateSnippet(snippet: Snippet): Promise<void> {
-    if (auth.currentUser) {
-      const docRef = doc(this.snippetsCollection, snippet.id);
-      const { id, ...snippetData } = snippet;
-      await updateDoc(docRef, snippetData);
-    } else {
-      const snippets = this.getLocalSnippets();
-      const index = snippets.findIndex(s => s.id === snippet.id);
-      if (index !== -1) {
-        snippets[index] = snippet;
-        this.setLocalSnippets(snippets);
-      }
+    const uid = await this.currentUserId();
+    if (!uid) {
+      const all = this.getLocalSnippets();
+      const idx = all.findIndex(s => s.id === snippet.id);
+      if (idx !== -1) { all[idx] = snippet; this.setLocalSnippets(all); }
+      return;
     }
+    const { error } = await supabase
+      .from('snippets')
+      .update({
+        title: snippet.title,
+        description: snippet.description,
+        code: snippet.code,
+        language: snippet.language,
+        tags: snippet.tags,
+        collection_id: snippet.collectionId ?? null,
+        is_public: snippet.isPublic,
+      })
+      .eq('id', snippet.id);
+    if (error) throw error;
   }
 
   async moveSnippetToCollection(snippetId: string, collectionId: string | null): Promise<void> {
     const snippet = await this.getSnippetById(snippetId);
     if (!snippet) return;
-
-    if (collectionId) {
-      const collection = await this.getCollectionById(collectionId);
-      if (!collection) return;
-    }
-
-    await this.updateSnippet({
-      ...snippet,
-      collectionId: collectionId || undefined
-    });
-
-    if (auth.currentUser) {
-      if (collectionId) {
-        const collection = await this.getCollectionById(collectionId);
-        if (collection && !collection.snippetIds.includes(snippetId)) {
-          await this.updateCollection({
-            ...collection,
-            snippetIds: [...collection.snippetIds, snippetId]
-          });
-        }
-      } else {
-        const collections = await this.getAllCollections();
-        for (const collection of collections) {
-          if (collection.snippetIds.includes(snippetId)) {
-            await this.updateCollection({
-              ...collection,
-              snippetIds: collection.snippetIds.filter(id => id !== snippetId)
-            });
-          }
-        }
-      }
-    } else {
-      const collections = this.getLocalCollections();
-      const updatedCollections = collections.map(collection => {
-        if (collectionId && collection.id === collectionId) {
-          return {
-            ...collection,
-            snippetIds: collection.snippetIds.includes(snippetId) 
-              ? collection.snippetIds 
-              : [...collection.snippetIds, snippetId]
-          };
-        } else if (collection.snippetIds.includes(snippetId)) {
-          return {
-            ...collection,
-            snippetIds: collection.snippetIds.filter(id => id !== snippetId)
-          };
-        }
-        return collection;
-      });
-      this.setLocalCollections(updatedCollections);
-    }
+    await this.updateSnippet({ ...snippet, collectionId: collectionId ?? undefined });
   }
 
   async duplicateSnippet(snippetId: string): Promise<Snippet> {
     const snippet = await this.getSnippetById(snippetId);
     if (!snippet) throw new Error('Snippet not found');
-
-    const { id, createdAt, ...snippetData } = snippet;
-    return this.createSnippet({
-      ...snippetData,
-      title: `${snippet.title} (Copy)`,
-    });
+    const { id: _id, createdAt: _ts, favoritesCount: _fc, ...rest } = snippet;
+    return this.createSnippet({ ...rest, title: `${snippet.title} (Copy)`, isFavorite: false });
   }
 }
 
