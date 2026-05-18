@@ -180,6 +180,7 @@ class SnippetService {
       supabase.from('favorites').select('snippet_id').eq('user_id', uid),
     ]);
     if (snippetsRes.error) throw snippetsRes.error;
+    if (favoritesRes.error) throw favoritesRes.error;
     const favoriteIds = new Set((favoritesRes.data ?? []).map((f: { snippet_id: string }) => f.snippet_id));
     return (snippetsRes.data as SnippetRow[]).map(row => rowToSnippet(row, favoriteIds.has(row.id)));
   }
@@ -291,10 +292,12 @@ class SnippetService {
       .maybeSingle();
 
     if (existing) {
-      await supabase.from('favorites').delete().eq('user_id', uid).eq('snippet_id', snippetId);
+      const { error } = await supabase.from('favorites').delete().eq('user_id', uid).eq('snippet_id', snippetId);
+      if (error) throw error;
       return false;
     } else {
-      await supabase.from('favorites').insert({ user_id: uid, snippet_id: snippetId });
+      const { error } = await supabase.from('favorites').insert({ user_id: uid, snippet_id: snippetId });
+      if (error) throw error;
       return true;
     }
   }
@@ -346,6 +349,7 @@ class SnippetService {
       .from('snippets')
       .select('*')
       .eq('collection_id', collectionId)
+      .eq('user_id', col.userId ?? uid)
       .order('created_at', { ascending: false });
     if (error) throw error;
     return (data as SnippetRow[]).map(row => rowToSnippet(row));
