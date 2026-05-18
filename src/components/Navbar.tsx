@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -98,31 +99,38 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-transparent hover:ring-primary transition-all">
-                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
+                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} referrerPolicy="no-referrer" />
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel className="font-normal">
-                  <p className="font-medium text-sm truncate">{user.displayName}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                </DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="font-normal">
+                    <p className="font-medium text-sm truncate">{user.displayName}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
-                  <User className="w-4 h-4 mr-2" /> Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
-                  <Settings className="w-4 h-4 mr-2" /> Settings
-                </DropdownMenuItem>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
+                    <User className="w-4 h-4 mr-2" /> Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
+                    <Settings className="w-4 h-4 mr-2" /> Settings
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive cursor-pointer"
-                  onClick={signOut}
-                >
-                  <LogOut className="w-4 h-4 mr-2" /> Sign Out
-                </DropdownMenuItem>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    data-variant="destructive"
+                    className="cursor-pointer"
+                    onClick={signOut}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
