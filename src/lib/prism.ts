@@ -1,25 +1,22 @@
-// Core
 import Prism from 'prismjs';
-// CSS
-import 'prismjs/themes/prism-tomorrow.css';
-import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
-
-// Basic languages only
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-tsx';
 import 'prismjs/components/prism-python';
-
-// Line numbers plugin
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-c';
+import 'prismjs/components/prism-cpp';
+import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-markup';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-markdown';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 
-// Ensure languages object exists
-if (typeof window !== 'undefined') {
-  window.Prism = Prism;
-}
-
-// Basic plaintext support
-Prism.languages.plaintext = Prism.languages.plaintext || {
-  'text': /[\s\S]+/
-};
-
-export { Prism }; 
+export { Prism };

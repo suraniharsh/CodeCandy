@@ -5,7 +5,7 @@ import { FiClock, FiTag, FiHeart, FiShare2, FiTrash2 } from 'react-icons/fi';
 import { snippetService, type Snippet } from '../services/snippetService';
 import { useAuth } from '../contexts/AuthContext';
 import { CodePreview } from '../components';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function SnippetView() {
   const { id } = useParams<{ id: string }>();

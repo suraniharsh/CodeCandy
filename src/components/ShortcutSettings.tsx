@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FiKey, FiRefreshCw } from 'react-icons/fi';
 import { ShortcutConfig, DEFAULT_SHORTCUTS } from '../types/shortcuts';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface ShortcutSettingProps {
   label: string;

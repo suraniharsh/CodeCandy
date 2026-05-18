@@ -1,8 +1,19 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FiMenu, FiX, FiSearch, FiPlus} from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, Search, Plus, Keyboard, LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface NavbarProps {
   onSidebarToggle: (isOpen: boolean) => void;
@@ -12,6 +23,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
   const { user, signOut } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { setIsModalVisible: setIsShortcutsOpen } = useKeyboardShortcuts();
+  const navigate = useNavigate();
 
   const handleSidebarToggle = () => {
     const newState = !isSidebarOpen;
@@ -19,120 +31,107 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
     onSidebarToggle(newState);
   };
 
+  const initials = user?.displayName
+    ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'U';
+
   return (
-    <nav className="fixed top-0 left-0 right-0 h-16 bg-dark-800 border-b border-dark-700 z-40">
-      <div className="h-full px-3 sm:px-4 flex items-center justify-between">
-        {/* Left section */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          <button
+    <nav className="fixed top-0 left-0 right-0 h-16 bg-background border-b border-border z-40">
+      <div className="h-full px-3 sm:px-4 flex items-center justify-between gap-3">
+        {/* Left */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleSidebarToggle}
-            className="p-2 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
-            aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+            aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
           >
-            {isSidebarOpen ? (
-              <FiX className="w-5 h-5 sm:w-6 sm:h-6" />
-            ) : (
-              <FiMenu className="w-5 h-5 sm:w-6 sm:h-6" />
-            )}
-          </button>
-          
-          <Link 
-            to="/"
-            className="text-lg sm:text-xl font-bold text-dark-100 hidden sm:block"
-          >
+            {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </Button>
+
+          <Link to="/" className="text-lg font-bold hidden sm:block tracking-tight">
             CodeCandy
           </Link>
         </div>
 
-        {/* Center section */}
-        <div className="flex-1 max-w-2xl mx-4 hidden sm:block">
+        {/* Center — search */}
+        <div className="flex-1 max-w-xl hidden sm:block">
           <div className="relative">
-            <input
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
               type="text"
               placeholder="Search snippets..."
-              className="w-full px-4 py-1.5 bg-dark-700 border border-dark-600 rounded-lg text-dark-100 text-sm placeholder-dark-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+              className="pl-9 h-9 bg-secondary border-0 focus-visible:ring-1 focus-visible:ring-primary"
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Enter') navigate(`/search?q=${e.currentTarget.value}`);
+              }}
             />
-            <FiSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400" />
           </div>
         </div>
 
-        {/* Right section */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Link
-            to="/search"
-            className="p-2 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors sm:hidden"
-          >
-            <FiSearch className="w-5 h-5" />
-          </Link>
+        {/* Right */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Button variant="ghost" size="icon" className="sm:hidden" onClick={() => navigate('/search')}>
+            <Search className="w-5 h-5" />
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hidden sm:flex gap-1.5 text-muted-foreground"
             onClick={() => setIsShortcutsOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
           >
-            <span className="text-sm">Shortcuts</span>
-            <span className="text-xs text-dark-400">(Ctrl + /)</span>
-          </button>
+            <Keyboard className="w-4 h-4" />
+            <span className="text-xs">Shortcuts</span>
+          </Button>
 
-          <Link
-            to="/create"
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors"
-          >
-            <FiPlus className="w-4 h-4" />
-            <span className="text-sm">New Snippet</span>
-          </Link>
+          <Button size="sm" className="hidden sm:flex gap-1.5" onClick={() => navigate('/create')}>
+            <Plus className="w-4 h-4" />
+            New Snippet
+          </Button>
 
-          <Link
-            to="/create"
-            className="sm:hidden p-2 text-dark-300 hover:text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
-          >
-            <FiPlus className="w-5 h-5" />
-          </Link>
+          <Button variant="ghost" size="icon" className="sm:hidden" onClick={() => navigate('/create')}>
+            <Plus className="w-5 h-5" />
+          </Button>
 
           {user ? (
-            <div className="relative group">
-              <button className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-transparent hover:border-primary-500 transition-colors">
-                <img
-                  src={user.photoURL || ''}
-                  alt={user.displayName || 'User'}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-              
-              <div className="absolute right-0 top-full mt-2 w-48 py-1 bg-dark-800 rounded-lg border border-dark-700 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <div className="px-4 py-2 border-b border-dark-700">
-                  <p className="text-sm font-medium text-dark-100 truncate">{user.displayName}</p>
-                  <p className="text-xs text-dark-400 truncate">{user.email}</p>
-                </div>
-                <Link
-                  to="/profile"
-                  className="block w-full px-4 py-2 text-sm text-dark-200 hover:bg-dark-700 transition-colors"
-                >
-                  Profile
-                </Link>
-                <Link
-                  to="/settings"
-                  className="block w-full px-4 py-2 text-sm text-dark-200 hover:bg-dark-700 transition-colors"
-                >
-                  Settings
-                </Link>
-                <button
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-transparent hover:ring-primary transition-all">
+                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel className="font-normal">
+                  <p className="font-medium text-sm truncate">{user.displayName}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
+                  <User className="w-4 h-4 mr-2" /> Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
+                  <Settings className="w-4 h-4 mr-2" /> Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive cursor-pointer"
                   onClick={signOut}
-                  className="block w-full px-4 py-2 text-sm text-red-400 hover:bg-dark-700 transition-colors text-left"
                 >
-                  Sign Out
-                </button>
-              </div>
-            </div>
+                  <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <Link
-              to="/login"
-              className="px-3 py-1.5 text-sm text-dark-100 hover:bg-dark-700/50 rounded-lg transition-colors"
-            >
+            <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
               Sign In
-            </Link>
+            </Button>
           )}
         </div>
       </div>
     </nav>
   );
-} 
+}

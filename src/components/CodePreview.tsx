@@ -3,7 +3,7 @@ import { Editor } from '@monaco-editor/react';
 import html2canvas from 'html2canvas';
 import { FiDownload, FiCopy, FiShare2, FiImage, FiClipboard} from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface CodePreviewProps {
   initialCode?: string;

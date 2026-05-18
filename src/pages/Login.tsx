@@ -4,7 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ErrorFallback } from '../components/ErrorFallback';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 function Login() {
   const { signInWithGoogle, signInWithGithub } = useAuth();

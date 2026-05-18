@@ -7,7 +7,7 @@ import { CreateCollectionForm } from '../components/CreateCollectionForm';
 import { CreateSnippetForm } from '../components/CreateSnippetForm';
 import { SnippetCard } from '../components/SnippetCard';
 import { useAuth } from '../contexts/AuthContext';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 function Collections() {
   const { user } = useAuth();

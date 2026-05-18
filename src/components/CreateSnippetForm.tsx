@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent, useRef } from 'react';
 import { snippetService } from '../services/snippetService';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import { FiLoader } from 'react-icons/fi';
 import { CodePreview } from '.';
 

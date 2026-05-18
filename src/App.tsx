@@ -5,7 +5,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Navbar, Sidebar } from './components';
 import { Home, Collections, Favorites, Search, SnippetView, Login, Profile, CreateSnippet, Settings, About } from './pages';
 import { AuthProvider } from './contexts/AuthContext';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { Loader } from './components/Loader';
@@ -109,30 +110,7 @@ function AppContent() {
           </AnimatePresence>
         </motion.main>
       </div>
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          className: 'bg-dark-800 text-dark-100',
-          style: {
-            background: '#1F2937',
-            color: '#F3F4F6',
-            borderRadius: '0.5rem',
-            border: '1px solid #374151',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10B981',
-              secondary: '#F3F4F6',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#EF4444',
-              secondary: '#F3F4F6',
-            },
-          },
-        }}
-      />
+      <Toaster position="bottom-right" theme="dark" richColors />
       <KeyboardShortcuts />
     </div>
   );
@@ -142,9 +120,11 @@ function App() {
   return (
     <HelmetProvider>
       <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <TooltipProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </TooltipProvider>
       </AuthProvider>
     </HelmetProvider>
   );
